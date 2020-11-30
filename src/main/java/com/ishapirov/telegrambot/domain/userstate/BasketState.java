@@ -1,35 +1,21 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
 
+@Service
 public class BasketState extends UserState{
-    public BasketState(UserSession userSession) {
-        super(userSession);
+
+    @Override
+    public State getState() {
+        return State.BASKET;
     }
 
     @Override
-    public ReplyKeyboardMarkup generateKeyboard() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setSelective(true);
-
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow row = new KeyboardRow();
-        row.add(new KeyboardButton("Назад"));
-
-        keyboard.add(row);
-
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        return replyKeyboardMarkup;
+    public ReplyKeyboardMarkup generateKeyboard(UserSession userSession) {
+        return getKeyboard().generateKeyboard(userSession);
     }
 
     @Override
@@ -38,11 +24,11 @@ public class BasketState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) {
+    public void changeSessionStateBasedOnInput(String messageText, UserSession userSession) {
         if(messageText.equals("Меню") || messageText.equals("Назад")){
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setState(State.MAIN_MENU);
         } else
-            this.userSession.setUserState(new UnknownInputState(userSession,this));
+            userSession.setState(new UnknownInputState(userSession,this));
     }
 
 

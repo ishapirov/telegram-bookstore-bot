@@ -1,21 +1,19 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+@Service
 public class StartState extends UserState{
 
-    public StartState(UserSession userSession) {
-        super(userSession);
-    }
-
     @Override
-    public SendMessage generateSendMessage() {
+    public SendMessage generateSendMessage(UserSession userSession) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(generateText());
         sendMessage.setReplyMarkup(generateKeyboard());
-        userSession.setUserState(new MainMenuState(userSession));
+        userSession.setState(State.MAIN_MENU);
         return sendMessage;
     }
 
@@ -30,5 +28,10 @@ public class StartState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) { }
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) { }
+
+    @Override
+    public State getState() {
+        return State.STATE;
+    }
 }

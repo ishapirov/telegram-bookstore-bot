@@ -1,6 +1,7 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -8,10 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CatalogMenuState extends UserState{
-    public CatalogMenuState(UserSession userSession) {
-        super(userSession);
-    }
 
     @Override
     public ReplyKeyboardMarkup generateKeyboard() {
@@ -42,16 +41,20 @@ public class CatalogMenuState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) {
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) {
             if(messageText.equals("Подборка книг для детей"))
-                this.userSession.setUserState(new MainMenuState(userSession));
+                userSession.setUserState(new MainMenuState(userSession));
             else if(messageText.equals("Книги для мам"))
-                this.userSession.setUserState(new MainMenuState(userSession));
+                userSession.setUserState(new MainMenuState(userSession));
             else if(messageText.equals("Каталог книг"))
-                this.userSession.setUserState(new BookCatalogState(userSession));
+                userSession.setUserState(new BookCatalogState(userSession));
             else if(messageText.equals("Меню") || messageText.equals("Назад"))
-                this.userSession.setUserState(new MainMenuState(userSession));
-            else this.userSession.setUserState(new UnknownInputState(userSession,this));
+                userSession.setUserState(new MainMenuState(userSession));
+            else userSession.setUserState(new UnknownInputState(userSession,this));
     }
 
+    @Override
+    public State getPossibleState() {
+        return State.CATALOG_MENU;
+    }
 }

@@ -1,16 +1,12 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+@Service
 public class UnknownInputState extends UserState{
-
-    UserState previousState;
-    public UnknownInputState(UserSession userSession,UserState previousState) {
-        super(userSession);
-        this.previousState = previousState;
-    }
 
     @Override
     public SendMessage generateSendMessage() {
@@ -32,5 +28,10 @@ public class UnknownInputState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) { }
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) { }
+
+    @Override
+    public State getPossibleState() {
+        return State.UNKNOWN_INPUT;
+    }
 }

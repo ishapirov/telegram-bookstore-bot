@@ -1,8 +1,9 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.Book;
 import com.ishapirov.telegrambot.domain.UserSession;
 import com.ishapirov.telegrambot.services.BookRetrieve;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -15,12 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Service
 public class BookCatalogState extends UserState {
-
-    public BookCatalogState(UserSession userSession) {
-        super(userSession);
-    }
 
     public SendMessage generateSendMessage(){
         SendMessage sendMessage = new SendMessage();
@@ -35,6 +32,8 @@ public class BookCatalogState extends UserState {
 
         return sendMessage;
     }
+
+
 
     public void sendBookPhotos() throws IOException {
 
@@ -71,16 +70,22 @@ public class BookCatalogState extends UserState {
         return "Каталог";
     }
 
+
     @Override
-    public void changeStateBasedOnInput(String messageText) {
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) {
         if(messageText.equals("Подборка книг для детей"))
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setUserState(new MainMenuState(userSession));
         else if(messageText.equals("Книги для мам"))
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setUserState(new MainMenuState(userSession));
         else if(messageText.equals("Каталог книг"))
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setUserState(new MainMenuState(userSession));
         else if(messageText.equals("Меню") || messageText.equals("Назад"))
-            this.userSession.setUserState(new MainMenuState(userSession));
-        else this.userSession.setUserState(new UnknownInputState(userSession,this));
+            userSession.setUserState(new MainMenuState(userSession));
+        else userSession.setUserState(new UnknownInputState(userSession,this));
+    }
+
+    @Override
+    public State getState() {
+        return State.BOOK_CATALOG;
     }
 }

@@ -1,7 +1,7 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -10,10 +10,8 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+@Service
 public class CurrencySelectionState extends UserState{
-    public CurrencySelectionState(UserSession userSession) {
-        super(userSession);
-    }
 
     @Override
     public ReplyKeyboardMarkup generateKeyboard() {
@@ -43,13 +41,13 @@ public class CurrencySelectionState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) {
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) {
         if (messageText.equals("Usd") || messageText.equals("Сум") || messageText.equals("Рубли")) {
             userSession.setCurrency(getCurrencyFromString(messageText));
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setUserState(new MainMenuState(userSession));
         } else if (messageText.equals("Меню") || messageText.equals("Назад"))
-            this.userSession.setUserState(new MainMenuState(userSession));
-        else this.userSession.setUserState(new UnknownInputState(userSession,this));
+            userSession.setUserState(new MainMenuState(userSession));
+        else userSession.setUserState(new UnknownInputState(userSession,this));
     }
 
     public Currency getCurrencyFromString(String currency){
@@ -58,6 +56,11 @@ public class CurrencySelectionState extends UserState{
         if(currency.equals("Рубли"))
             return Currency.getInstance("RUB");
         return Currency.getInstance("USD");
+    }
+
+    @Override
+    public State getPossibleState() {
+        return State.CURRENCY_SELECTION;
     }
 
 }

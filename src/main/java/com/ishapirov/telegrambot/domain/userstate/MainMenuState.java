@@ -1,38 +1,21 @@
-package com.ishapirov.telegrambot.domain.userstate;
+package com.ishapirov.telegrambot.domain.views;
 
 import com.ishapirov.telegrambot.domain.UserSession;
+import com.ishapirov.telegrambot.domain.keyboard.Keyboard;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Service
 public class MainMenuState extends UserState{
 
-    public MainMenuState(UserSession userSession){
-        super(userSession);
+    public MainMenuState(@Autowired @Qualifier("basketKeyboard") Keyboard keyboard) {
+        super(keyboard);
     }
 
     public ReplyKeyboardMarkup generateKeyboard(){
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setSelective(true);
-
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton("Каталог"));
-        row1.add(new KeyboardButton("Корзина"));
-        KeyboardRow row2 = new KeyboardRow();
-        row2.add(new KeyboardButton("Связь с менеджером"));
-        row2.add(new KeyboardButton("Выбор валюты "+"(" + userSession.getCurrency().toString() + ")"));
-
-        keyboard.add(row1);
-        keyboard.add(row2);
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        return replyKeyboardMarkup;
+       keyboard.generateKeyboard();
     }
 
     public String generateText(){
@@ -40,18 +23,23 @@ public class MainMenuState extends UserState{
     }
 
     @Override
-    public void changeStateBasedOnInput(String messageText) {
+    public void changeSessionStateBasedOnInput(String messageText,UserSession userSession) {
         if(messageText.equals("Меню") || messageText.equals("Назад"))
-            this.userSession.setUserState(new MainMenuState(userSession));
+            userSession.setUserState(new MainMenuState(userSession));
         else if(messageText.equals("Каталог"))
-            this.userSession.setUserState(new CatalogMenuState(userSession));
+            userSession.setUserState(new CatalogMenuState(userSession));
         else if(messageText.equals("Корзина"))
-            this.userSession.setUserState(new BasketState(userSession));
+            userSession.setUserState(new BasketState(userSession));
         else if(messageText.equals("Связь с менеджером"))
-            this.userSession.setUserState(new ManagerContactInformationState(userSession));
+            userSession.setUserState(new ManagerContactInformationState(userSession));
         else if(messageText.startsWith("Выбор валюты"))
-            this.userSession.setUserState(new CurrencySelectionState(userSession));
-        else this.userSession.setUserState(new UnknownInputState(userSession,this));
+            userSession.setUserState(new CurrencySelectionState(userSession));
+        else userSession.setUserState(new UnknownInputState(userSession,this));
+    }
+
+    @Override
+    public State getState() {
+        return State.MAIN_MENU;
     }
 
 }
