@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain.views;
+package com.ishapirov.telegrambot.domain.userstate;
 
 import com.ishapirov.telegrambot.domain.Book;
 import com.ishapirov.telegrambot.domain.UserSession;
@@ -45,7 +45,6 @@ public class BookCatalogState extends UserState {
         }
 
     }
-
 
     @Override
     public ReplyKeyboardMarkup generateKeyboard() {

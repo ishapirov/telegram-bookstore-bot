@@ -24,4 +24,12 @@ public class InMemoryCache implements UserSessionCache {
     public void setSession(Integer userID, UserSession userSession) {
         userSessionMap.put(userID,userSession);
     }
+
+    @Override
+    public UserSession newSession(Integer userID) {
+        UserSession newSession = new UserSession();
+        userSessionMap.put(userID,newSession);
+        return newSession;
+    }
+
 }

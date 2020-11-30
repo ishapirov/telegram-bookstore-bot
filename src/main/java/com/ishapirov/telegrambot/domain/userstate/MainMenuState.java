@@ -1,21 +1,36 @@
-package com.ishapirov.telegrambot.domain.views;
+package com.ishapirov.telegrambot.domain.userstate;
 
 import com.ishapirov.telegrambot.domain.UserSession;
-import com.ishapirov.telegrambot.domain.keyboard.Keyboard;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MainMenuState extends UserState{
 
-    public MainMenuState(@Autowired @Qualifier("basketKeyboard") Keyboard keyboard) {
-        super(keyboard);
-    }
-
     public ReplyKeyboardMarkup generateKeyboard(){
-       keyboard.generateKeyboard();
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setSelective(true);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add(new KeyboardButton("Каталог"));
+        row1.add(new KeyboardButton("Корзина"));
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add(new KeyboardButton("Связь с менеджером"));
+        row2.add(new KeyboardButton("Выбор валюты "+"(" + userSession.getCurrency().toString() + ")"));
+
+        keyboard.add(row1);
+        keyboard.add(row2);
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        return replyKeyboardMarkup;
     }
 
     public String generateText(){

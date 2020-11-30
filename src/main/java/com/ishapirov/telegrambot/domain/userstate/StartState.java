@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain.views;
+package com.ishapirov.telegrambot.domain.userstate;
 
 import com.ishapirov.telegrambot.domain.UserSession;
 import org.springframework.stereotype.Service;

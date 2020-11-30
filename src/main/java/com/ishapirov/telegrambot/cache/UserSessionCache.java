@@ -4,5 +4,8 @@ import com.ishapirov.telegrambot.domain.UserSession;
 
 public interface UserSessionCache {
     UserSession getSession(Integer userID);
+
     void setSession(Integer userID, UserSession userSession);
+
+    UserSession newSession(Integer userID);
 }

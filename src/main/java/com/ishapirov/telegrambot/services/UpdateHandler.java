@@ -10,7 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Service
 public class UpdateHandler {
 
-    @Autowired MessageCreator messageCreator;
+    @Autowired
+    MessageCreator messageCreator;
 
     public SendMessage handleUpdate(Update update){
 
@@ -28,6 +29,7 @@ public class UpdateHandler {
     private SendMessage handleCallback(CallbackQuery callbackQuery){
         long chatId = callbackQuery.getMessage().getChatId();
         int userId = callbackQuery.getFrom().getId();
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(callbackQuery.getData());
