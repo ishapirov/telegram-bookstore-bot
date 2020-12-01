@@ -1,5 +1,7 @@
 package com.ishapirov.telegrambot.services;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.domain.userviews.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class UpdateHandler {
 
     @Autowired
-    MessageCreator messageCreator;
+    ViewService viewService;
 
     public SendMessage handleUpdate(Update update){
 
@@ -21,18 +23,24 @@ public class UpdateHandler {
         }
         if(update.hasMessage()){
             Message message = update.getMessage();
-            return messageCreator.getSendMessage(message);
+            return handleMessage(message);
         }
         return null;
     }
 
     private SendMessage handleCallback(CallbackQuery callbackQuery){
-        long chatId = callbackQuery.getMessage().getChatId();
-        int userId = callbackQuery.getFrom().getId();
+        UserCallbackRequest userCallbackRequest = new UserCallbackRequest(callbackQuery);
+        View viewUserClickedOn = viewService.getView(userCallbackRequest.getViewInWhichButtonWasClicked());
+        View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest.getButtonClicked());
+        SendMessage sendMessage = nextViewToRender.generateSendMessage();
+        sendMessage.setChatId(userCallbackRequest.getChatId());
+        return sendMessage;
+    }
 
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
-        sendMessage.setText(callbackQuery.getData());
+    private SendMessage handleMessage(Message message){
+        View mainMenuView = viewService.getMainMenuView();
+        SendMessage sendMessage = mainMenuView.generateSendMessage();
+        sendMessage.setChatId(message.getChatId());
         return sendMessage;
     }
 }

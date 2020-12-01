@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class BookRetrieve {
     @Autowired
-    private static BookRepository bookRepository;
+    private BookRepository bookRepository;
 
-    public static List<Book> getAllBooks(){
+    public List<Book> getAllBooks(){
         return bookRepository.findAll();
     }
 }
