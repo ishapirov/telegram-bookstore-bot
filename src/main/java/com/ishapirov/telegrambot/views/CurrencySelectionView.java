@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -22,17 +22,17 @@ public class CurrencySelectionView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonUSD = new InlineKeyboardButton().setText("USD");
-        buttonUSD.setCallbackData(getTypeString() + "-usd");
+        buttonUSD.setCallbackData(getTypeString() + "-" + getUSDText());
         InlineKeyboardButton buttonSUM = new InlineKeyboardButton().setText("Сум");
-        buttonSUM.setCallbackData(getTypeString() + "-sum");
+        buttonSUM.setCallbackData(getTypeString() + "-" + getSUMText());
         keyboardButtonsRow1.add(buttonUSD);
         keyboardButtonsRow1.add(buttonSUM);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonRUB = new InlineKeyboardButton().setText("Рубли");
-        buttonRUB.setCallbackData(getTypeString() + "-rub");
+        buttonRUB.setCallbackData(getTypeString() + "-" + getRUBText());
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText("Назад");
-        buttonBack.setCallbackData(getTypeString() + "-back");
+        buttonBack.setCallbackData(getTypeString() + "-" + getBackText());
         keyboardButtonsRow2.add(buttonRUB);
         keyboardButtonsRow2.add(buttonBack);
 
@@ -44,6 +44,19 @@ public class CurrencySelectionView extends View {
         return inlineKeyboardMarkup;
     }
 
+    public String getUSDText(){
+        return "usd";
+    }
+    public String getSUMText(){
+        return "sum";
+    }
+    public String getRUBText(){
+        return "rub";
+    }
+    public String getBackText(){
+        return "back";
+    }
+
     @Override
     public String generateText() {
         return "выберите валюту, которую вы хотите использовать";
@@ -51,10 +64,10 @@ public class CurrencySelectionView extends View {
 
     @Override
     public View getNextView(String messageText) {
-        if (messageText.equals("Usd") || messageText.equals("Сум") || messageText.equals("Рубли")) {
+        if (messageText.equals(getUSDText()) || messageText.equals(getSUMText()) || messageText.equals(getRUBText())) {
             //userSession.setCurrency(getCurrencyFromString(messageText));
             return viewService.getMainMenuView();
-        } else if (messageText.equals("Меню") || messageText.equals("Назад"))
+        } else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(getBackText()))
             return viewService.getMainMenuView();
         else throw new UnexpectedInputException("Unexpected input");
     }

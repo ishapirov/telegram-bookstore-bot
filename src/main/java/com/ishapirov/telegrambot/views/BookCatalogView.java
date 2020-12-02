@@ -1,6 +1,6 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
-import com.ishapirov.telegrambot.domain.Book;
+import com.ishapirov.telegrambot.domain.book.Book;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.BookRetrieve;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -31,11 +31,11 @@ public class BookCatalogView extends View {
         sendMessage.setText(generateText());
         sendMessage.setReplyMarkup(generateKeyboard());
 
-        try {
-            sendBookPhotos();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sendBookPhotos();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         return sendMessage;
     }
@@ -57,14 +57,16 @@ public class BookCatalogView extends View {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<Book> bookList = bookRetrieve.getAllBooks();
-        List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
+
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+
         for(Book book:bookList){
+            List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton().setText(book.getName());
             button.setCallbackData(getTypeString() + "-"+book.getName());
             keyboardRow.add(button);
+            rowList.add(keyboardRow);
         }
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardRow);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;

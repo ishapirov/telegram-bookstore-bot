@@ -1,6 +1,7 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,24 +15,26 @@ import java.util.List;
 public class MainMenuView extends View {
     @Autowired
     ViewService viewService;
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
     public InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText("Подборка книг для детей");
-        buttonCatalog.setCallbackData(getTypeString() + "-catalog");
-        InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText("Корзина");
-        buttonBasket.setCallbackData(getTypeString() + "-basket");
+        InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.catalog"));
+        buttonCatalog.setCallbackData(getTypeString() + "-" + catalogText());
+        InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.basket"));
+        buttonBasket.setCallbackData(getTypeString() + "-" + basketText());
         keyboardButtonsRow1.add(buttonCatalog);
         keyboardButtonsRow1.add(buttonBasket);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText("Связь с менеджером");
-        buttonManager.setCallbackData(getTypeString() + "-manager");
-        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText("Выбор валюты");
-        buttonCurrency.setCallbackData(getTypeString() + "-basket");
+        InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager"));
+        buttonManager.setCallbackData(getTypeString() + "-" + managerText());
+        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency"));
+        buttonCurrency.setCallbackData(getTypeString() + "-" + currencyText());
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
 
@@ -44,20 +47,36 @@ public class MainMenuView extends View {
     }
 
     public String generateText(){
-        return "Главное Меню";
+        return localeMessageService.getMessage("view.mainmenu.generate");
+    }
+
+    public String catalogText(){
+        return "catalog";
+    }
+
+    public String basketText(){
+        return "basket";
+    }
+
+    public String managerText(){
+        return "manager";
+    }
+
+    public String currencyText(){
+        return "currency";
     }
 
     @Override
     public View getNextView(String messageText) {
-        if(messageText.equals("Меню") || messageText.equals("Назад"))
+        if(messageText.equals(getTypeString()) || messageText.equals("back"))
             return viewService.getMainMenuView();
-        else if(messageText.equals("Каталог"))
+        else if(messageText.equals(catalogText()))
             return viewService.getCatalogMenuView();
-        else if(messageText.equals("Корзина"))
+        else if(messageText.equals(basketText()))
             return viewService.getBasketView();
-        else if(messageText.equals("Связь с менеджером"))
+        else if(messageText.equals(managerText()))
             return viewService.getManagerContactInformationView();
-        else if(messageText.startsWith("Выбор валюты"))
+        else if(messageText.startsWith(currencyText()))
             return viewService.getCurrencySelectionView();
         else throw new UnexpectedInputException("Unexpected input");
     }

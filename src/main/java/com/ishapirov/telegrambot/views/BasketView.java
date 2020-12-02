@@ -1,6 +1,7 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,18 +11,22 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
-public class ManagerContactInformationView extends View {
+public class BasketView extends View {
     @Autowired
     ViewService viewService;
+
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
     public InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText("Назад");
-        buttonBack.setCallbackData(getTypeString() + "-back");
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
+        buttonBack.setCallbackData(getTypeString() + "-" + backText());
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -32,12 +37,16 @@ public class ManagerContactInformationView extends View {
 
     @Override
     public String generateText() {
-        return "Some contact information here";
+        return "Ваша Корзина";
+    }
+
+    public String backText(){
+        return "back";
     }
 
     @Override
     public View getNextView(String messageText) {
-        if(messageText.equals("Меню") || messageText.equals("Назад"))
+        if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else
             throw new UnexpectedInputException("Unexpected input");
@@ -45,6 +54,6 @@ public class ManagerContactInformationView extends View {
 
     @Override
     public String getTypeString() {
-        return "managercontactinformation";
+        return "basket";
     }
 }

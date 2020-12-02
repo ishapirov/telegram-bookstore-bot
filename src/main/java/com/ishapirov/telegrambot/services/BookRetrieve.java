@@ -1,6 +1,6 @@
 package com.ishapirov.telegrambot.services;
 
-import com.ishapirov.telegrambot.domain.Book;
+import com.ishapirov.telegrambot.domain.book.Book;
 import com.ishapirov.telegrambot.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

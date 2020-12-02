@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

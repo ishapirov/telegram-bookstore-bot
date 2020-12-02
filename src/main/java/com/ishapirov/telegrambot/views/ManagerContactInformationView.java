@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -10,9 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
-public class BasketView extends View {
+public class ManagerContactInformationView extends View {
     @Autowired
     ViewService viewService;
 
@@ -33,12 +32,16 @@ public class BasketView extends View {
 
     @Override
     public String generateText() {
-        return "Ваша Корзина";
+        return "Some contact information here";
+    }
+
+    public String backText(){
+        return "back";
     }
 
     @Override
     public View getNextView(String messageText) {
-        if(messageText.equals("Меню") || messageText.equals("Назад"))
+        if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else
             throw new UnexpectedInputException("Unexpected input");
@@ -46,6 +49,6 @@ public class BasketView extends View {
 
     @Override
     public String getTypeString() {
-        return "basket";
+        return "managercontactinformation";
     }
 }

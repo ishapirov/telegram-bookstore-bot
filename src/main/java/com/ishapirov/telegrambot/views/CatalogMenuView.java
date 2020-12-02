@@ -1,6 +1,7 @@
-package com.ishapirov.telegrambot.domain.userviews;
+package com.ishapirov.telegrambot.views;
 
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,24 +15,26 @@ import java.util.List;
 public class CatalogMenuView extends View {
     @Autowired
     ViewService viewService;
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
     public InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonKidBooks = new InlineKeyboardButton().setText("Подборка книг для детей");
-        buttonKidBooks.setCallbackData(getTypeString() + "-kids");
-        InlineKeyboardButton buttonMomBooks = new InlineKeyboardButton().setText("Книги для мам");
-        buttonMomBooks.setCallbackData(getTypeString() + "-back");
+        InlineKeyboardButton buttonKidBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.kids"));
+        buttonKidBooks.setCallbackData(getTypeString() + "-" + getKidsText());
+        InlineKeyboardButton buttonMomBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.moms"));
+        buttonMomBooks.setCallbackData(getTypeString() + "-" + getMomsText());
         keyboardButtonsRow1.add(buttonKidBooks);
         keyboardButtonsRow1.add(buttonMomBooks);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        InlineKeyboardButton buttonCatalog= new InlineKeyboardButton().setText("Каталог книг");
-        buttonCatalog.setCallbackData(getTypeString() + "-catalog");
-        InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText("Назад");
-        buttonBack  .setCallbackData(getTypeString() + "-back");
+        InlineKeyboardButton buttonCatalog= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.catalog"));
+        buttonCatalog.setCallbackData(getTypeString() + "-" + getCatalogText());
+        InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
+        buttonBack.setCallbackData(getTypeString() + "-" + getBackText());
         keyboardButtonsRow2.add(buttonCatalog);
         keyboardButtonsRow2.add(buttonBack);
 
@@ -43,20 +46,35 @@ public class CatalogMenuView extends View {
         return inlineKeyboardMarkup;
     }
 
+    public String getKidsText(){
+        return "kids";
+    }
+
+    public String getMomsText(){
+        return "moms";
+    }
+    public String getCatalogText(){
+        return "catalog";
+    }
+
+    public String getBackText(){
+        return "back";
+    }
+
     @Override
     public String generateText() {
-        return "Каталог";
+        return localeMessageService.getMessage("view.catalogMenu.generate");
     }
 
     @Override
     public View getNextView(String messageText) {
-        if(messageText.equals("Подборка книг для детей"))
+        if(messageText.equals(getKidsText()))
             return viewService.getMainMenuView();
-        else if(messageText.equals("Книги для мам"))
+        else if(messageText.equals(getMomsText()))
             return viewService.getMainMenuView();
-        else if(messageText.equals("Каталог книг"))
+        else if(messageText.equals(getCatalogText()))
             return viewService.getBookCatalogView();
-        else if(messageText.equals("Меню") || messageText.equals("Назад"))
+        else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(getBackText()))
             return viewService.getMainMenuView();
         else throw new UnexpectedInputException("Unexpected input");
     }

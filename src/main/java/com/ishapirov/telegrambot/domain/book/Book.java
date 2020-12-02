@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.domain;
+package com.ishapirov.telegrambot.domain.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Table(name="book")
+@MappedSuperclass
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public abstract class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer bookNumber;

@@ -1,6 +1,6 @@
 package com.ishapirov.telegrambot.services;
 
-import com.ishapirov.telegrambot.domain.userviews.*;
+import com.ishapirov.telegrambot.views.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
