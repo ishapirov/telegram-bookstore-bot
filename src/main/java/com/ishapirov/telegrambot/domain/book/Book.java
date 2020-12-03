@@ -15,15 +15,14 @@ public abstract class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer bookNumber;
-
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] picture;
-
     private String name;
     private String author;
     private String publisher;
     private Date publishingYear;
     private String description;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] picture;
+
     private String linkToAudioFile;
 }

@@ -3,6 +3,7 @@ package com.ishapirov.telegrambot.domain;
 
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Data
 public class UserCallbackRequest {
@@ -21,5 +22,10 @@ public class UserCallbackRequest {
         String[] callbackParts = callbackString.split("-");
         this.viewInWhichButtonWasClicked = callbackParts[0];
         this.buttonClicked = callbackParts[1];
+    }
+
+    public UserCallbackRequest(Message message){
+        this.chatId = message.getChatId();
+        this.userId = message.getFrom().getId();
     }
 }

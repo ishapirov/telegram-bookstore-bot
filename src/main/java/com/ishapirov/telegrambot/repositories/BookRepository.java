@@ -2,11 +2,8 @@ package com.ishapirov.telegrambot.repositories;
 
 import com.ishapirov.telegrambot.domain.book.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-import java.util.Optional;
-
-@Repository
+@NoRepositoryBean
 public interface BookRepository extends JpaRepository<Book,Integer> {
-    Optional<Book> findByBookNumber(Integer bookNumber);
 }

@@ -1,5 +1,6 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -16,12 +17,11 @@ import java.util.List;
 public class BasketView extends View {
     @Autowired
     ViewService viewService;
-
     @Autowired
     LocaleMessageService localeMessageService;
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -37,7 +37,7 @@ public class BasketView extends View {
 
     @Override
     public String generateText() {
-        return "Ваша Корзина";
+        return localeMessageService.getMessage("view.basket.generate");
     }
 
     public String backText(){
@@ -45,7 +45,7 @@ public class BasketView extends View {
     }
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else

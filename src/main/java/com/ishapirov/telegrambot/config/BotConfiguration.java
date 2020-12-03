@@ -2,10 +2,8 @@ package com.ishapirov.telegrambot.config;
 
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,13 +23,4 @@ public class BotConfiguration {
         return viewMap;
     }
 
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource
-                = new ReloadableResourceBundleMessageSource();
-
-        messageSource.setBasename("classpath:messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
 }

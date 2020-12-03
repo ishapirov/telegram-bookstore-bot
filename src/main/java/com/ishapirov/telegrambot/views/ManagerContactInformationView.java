@@ -1,6 +1,8 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +16,15 @@ import java.util.List;
 public class ManagerContactInformationView extends View {
     @Autowired
     ViewService viewService;
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText("Назад");
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
         buttonBack.setCallbackData(getTypeString() + "-back");
         keyboardButtonsRow1.add(buttonBack);
 
@@ -32,7 +36,7 @@ public class ManagerContactInformationView extends View {
 
     @Override
     public String generateText() {
-        return "Some contact information here";
+        return localeMessageService.getMessage("view.manager.generate");
     }
 
     public String backText(){
@@ -40,7 +44,7 @@ public class ManagerContactInformationView extends View {
     }
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else

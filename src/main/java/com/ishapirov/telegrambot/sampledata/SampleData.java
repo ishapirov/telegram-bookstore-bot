@@ -2,7 +2,7 @@ package com.ishapirov.telegrambot.sampledata;
 
 import com.ishapirov.telegrambot.domain.book.ParentingBook;
 import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
-import com.ishapirov.telegrambot.repositories.BookRepository;
+import com.ishapirov.telegrambot.repositories.ParentingBookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.core.io.ClassPathResource;
@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 @Component
 public class SampleData {
     @Autowired
-    private BookRepository bookRepository;
+    private ParentingBookRepository parentingBookRepository;
 
 
 //    @EventListener
@@ -35,6 +35,6 @@ public class SampleData {
         testBook.setPublisher("Plato Inc.");
         testBook.setPublishingYear(simpleDateFormat.parse("2014-02-14"));
 
-        bookRepository.save(testBook);
+        parentingBookRepository.save(testBook);
     }
 }

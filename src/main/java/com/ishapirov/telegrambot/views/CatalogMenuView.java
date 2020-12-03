@@ -1,5 +1,6 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -19,7 +20,7 @@ public class CatalogMenuView extends View {
     LocaleMessageService localeMessageService;
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -67,7 +68,7 @@ public class CatalogMenuView extends View {
     }
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals(getKidsText()))
             return viewService.getMainMenuView();
         else if(messageText.equals(getMomsText()))

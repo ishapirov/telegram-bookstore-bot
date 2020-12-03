@@ -31,18 +31,16 @@ public class UpdateHandler {
     private SendMessage handleCallback(CallbackQuery callbackQuery){
         UserCallbackRequest userCallbackRequest = new UserCallbackRequest(callbackQuery);
         View viewUserClickedOn = viewService.getView(userCallbackRequest.getViewInWhichButtonWasClicked());
-        System.out.println("1 " + viewUserClickedOn.getTypeString());
-        View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest.getButtonClicked());
-        System.out.println("2 " + nextViewToRender.getTypeString());
-        SendMessage sendMessage = nextViewToRender.generateSendMessage();
-        System.out.println("3 " + sendMessage);
+        View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest.getButtonClicked(),userCallbackRequest);
+        SendMessage sendMessage = nextViewToRender.generateSendMessage(userCallbackRequest);
         sendMessage.setChatId(userCallbackRequest.getChatId());
         return sendMessage;
     }
 
     private SendMessage handleMessage(Message message){
+        UserCallbackRequest userCallbackRequest = new UserCallbackRequest(message);
         View mainMenuView = viewService.getMainMenuView();
-        SendMessage sendMessage = mainMenuView.generateSendMessage();
+        SendMessage sendMessage = mainMenuView.generateSendMessage(userCallbackRequest);
         sendMessage.setChatId(message.getChatId());
         return sendMessage;
     }

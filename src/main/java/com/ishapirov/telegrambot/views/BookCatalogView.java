@@ -1,8 +1,10 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.domain.book.Book;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.BookRetrieve;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,14 @@ public class BookCatalogView extends View {
     ViewService viewService;
     @Autowired
     BookRetrieve bookRetrieve;
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
-    public SendMessage generateSendMessage(){
+    public SendMessage generateSendMessage(UserCallbackRequest userCallbackRequest){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(generateText());
-        sendMessage.setReplyMarkup(generateKeyboard());
+        sendMessage.setReplyMarkup(generateKeyboard(userCallbackRequest));
 
 //        try {
 //            sendBookPhotos();
@@ -53,7 +57,7 @@ public class BookCatalogView extends View {
     }
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<Book> bookList = bookRetrieve.getAllBooks();
@@ -74,12 +78,12 @@ public class BookCatalogView extends View {
 
     @Override
     public String generateText() {
-        return "Каталог";
+        return localeMessageService.getMessage("view.bookcatalog.generate");
     }
 
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals("Подборка книг для детей"))
             return viewService.getMainMenuView();
         else if(messageText.equals("Книги для мам"))

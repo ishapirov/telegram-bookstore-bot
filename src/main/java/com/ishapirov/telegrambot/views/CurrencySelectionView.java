@@ -1,6 +1,9 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.LocaleMessageService;
+import com.ishapirov.telegrambot.services.UserProfileService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,23 +18,27 @@ import java.util.List;
 public class CurrencySelectionView extends View {
     @Autowired
     ViewService viewService;
+    @Autowired
+    UserProfileService userProfileService;
+    @Autowired
+    LocaleMessageService localeMessageService;
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonUSD = new InlineKeyboardButton().setText("USD");
+        InlineKeyboardButton buttonUSD = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.usd"));
         buttonUSD.setCallbackData(getTypeString() + "-" + getUSDText());
-        InlineKeyboardButton buttonSUM = new InlineKeyboardButton().setText("Сум");
+        InlineKeyboardButton buttonSUM = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.sum"));
         buttonSUM.setCallbackData(getTypeString() + "-" + getSUMText());
         keyboardButtonsRow1.add(buttonUSD);
         keyboardButtonsRow1.add(buttonSUM);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        InlineKeyboardButton buttonRUB = new InlineKeyboardButton().setText("Рубли");
+        InlineKeyboardButton buttonRUB = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.rub"));
         buttonRUB.setCallbackData(getTypeString() + "-" + getRUBText());
-        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText("Назад");
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
         buttonBack.setCallbackData(getTypeString() + "-" + getBackText());
         keyboardButtonsRow2.add(buttonRUB);
         keyboardButtonsRow2.add(buttonBack);
@@ -59,13 +66,14 @@ public class CurrencySelectionView extends View {
 
     @Override
     public String generateText() {
-        return "выберите валюту, которую вы хотите использовать";
+        return localeMessageService.getMessage("view.currency.generate");
     }
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+        System.out.println(messageText);
         if (messageText.equals(getUSDText()) || messageText.equals(getSUMText()) || messageText.equals(getRUBText())) {
-            //userSession.setCurrency(getCurrencyFromString(messageText));
+            userProfileService.setCurrencyForUser(userCallbackRequest.getUserId(), getCurrencyFromString(messageText));
             return viewService.getMainMenuView();
         } else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(getBackText()))
             return viewService.getMainMenuView();
@@ -73,9 +81,9 @@ public class CurrencySelectionView extends View {
     }
 
     public Currency getCurrencyFromString(String currency){
-        if(currency.equals("Сум"))
+        if(currency.equals(getSUMText()))
             return Currency.getInstance("UZS");
-        if(currency.equals("Рубли"))
+        if(currency.equals(getRUBText()))
             return Currency.getInstance("RUB");
         return Currency.getInstance("USD");
     }

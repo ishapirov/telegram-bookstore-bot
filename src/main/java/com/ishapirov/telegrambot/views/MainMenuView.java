@@ -1,7 +1,9 @@
 package com.ishapirov.telegrambot.views;
 
+import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
+import com.ishapirov.telegrambot.services.UserProfileService;
 import com.ishapirov.telegrambot.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,12 @@ public class MainMenuView extends View {
     @Autowired
     ViewService viewService;
     @Autowired
+    UserProfileService userProfileService;
+    @Autowired
     LocaleMessageService localeMessageService;
 
     @Override
-    public InlineKeyboardMarkup generateKeyboard() {
+    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -33,7 +37,7 @@ public class MainMenuView extends View {
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager"));
         buttonManager.setCallbackData(getTypeString() + "-" + managerText());
-        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency"));
+        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency") +" (" + userProfileService.getUserProfile(userCallbackRequest.getUserId()).getCurrency() + ")");
         buttonCurrency.setCallbackData(getTypeString() + "-" + currencyText());
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
@@ -67,7 +71,7 @@ public class MainMenuView extends View {
     }
 
     @Override
-    public View getNextView(String messageText) {
+    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals(getTypeString()) || messageText.equals("back"))
             return viewService.getMainMenuView();
         else if(messageText.equals(catalogText()))
