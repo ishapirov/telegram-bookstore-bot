@@ -1,10 +1,11 @@
-package com.ishapirov.telegrambot.views;
+package com.ishapirov.telegrambot.views.mainmenu;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.UserProfileService;
 import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -28,17 +29,17 @@ public class MainMenuView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.catalog"));
-        buttonCatalog.setCallbackData(getTypeString() + "-" + catalogText());
+        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),catalogText()));
         InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.basket"));
-        buttonBasket.setCallbackData(getTypeString() + "-" + basketText());
+        buttonBasket.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),basketText()));
         keyboardButtonsRow1.add(buttonCatalog);
         keyboardButtonsRow1.add(buttonBasket);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager"));
-        buttonManager.setCallbackData(getTypeString() + "-" + managerText());
+        buttonManager.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),managerText()));
         InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency") +" (" + userProfileService.getUserProfile(userCallbackRequest.getUserId()).getCurrency() + ")");
-        buttonCurrency.setCallbackData(getTypeString() + "-" + currencyText());
+        buttonCurrency.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),currencyText()));
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
 

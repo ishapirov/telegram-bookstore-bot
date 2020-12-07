@@ -1,10 +1,11 @@
-package com.ishapirov.telegrambot.views;
+package com.ishapirov.telegrambot.views.currency;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.UserProfileService;
 import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -29,17 +30,17 @@ public class CurrencySelectionView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonUSD = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.usd"));
-        buttonUSD.setCallbackData(getTypeString() + "-" + getUSDText());
+        buttonUSD.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), usdText()));
         InlineKeyboardButton buttonSUM = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.sum"));
-        buttonSUM.setCallbackData(getTypeString() + "-" + getSUMText());
+        buttonSUM.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), sumText()));
         keyboardButtonsRow1.add(buttonUSD);
         keyboardButtonsRow1.add(buttonSUM);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonRUB = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.rub"));
-        buttonRUB.setCallbackData(getTypeString() + "-" + getRUBText());
+        buttonRUB.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), rubText()));
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(getTypeString() + "-" + getBackText());
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
         keyboardButtonsRow2.add(buttonRUB);
         keyboardButtonsRow2.add(buttonBack);
 
@@ -51,16 +52,16 @@ public class CurrencySelectionView extends View {
         return inlineKeyboardMarkup;
     }
 
-    public String getUSDText(){
+    public String usdText(){
         return "usd";
     }
-    public String getSUMText(){
+    public String sumText(){
         return "sum";
     }
-    public String getRUBText(){
+    public String rubText(){
         return "rub";
     }
-    public String getBackText(){
+    public String backText(){
         return "back";
     }
 
@@ -72,18 +73,18 @@ public class CurrencySelectionView extends View {
     @Override
     public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         System.out.println(messageText);
-        if (messageText.equals(getUSDText()) || messageText.equals(getSUMText()) || messageText.equals(getRUBText())) {
+        if (messageText.equals(usdText()) || messageText.equals(sumText()) || messageText.equals(rubText())) {
             userProfileService.setCurrencyForUser(userCallbackRequest.getUserId(), getCurrencyFromString(messageText));
             return viewService.getMainMenuView();
-        } else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(getBackText()))
+        } else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else throw new UnexpectedInputException("Unexpected input");
     }
 
     public Currency getCurrencyFromString(String currency){
-        if(currency.equals(getSUMText()))
+        if(currency.equals(sumText()))
             return Currency.getInstance("UZS");
-        if(currency.equals(getRUBText()))
+        if(currency.equals(rubText()))
             return Currency.getInstance("RUB");
         return Currency.getInstance("USD");
     }

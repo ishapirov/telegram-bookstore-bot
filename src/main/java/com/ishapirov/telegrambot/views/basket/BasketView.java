@@ -1,9 +1,10 @@
-package com.ishapirov.telegrambot.views;
+package com.ishapirov.telegrambot.views.basket;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -26,7 +27,7 @@ public class BasketView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(getTypeString() + "-" + backText());
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText()));
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

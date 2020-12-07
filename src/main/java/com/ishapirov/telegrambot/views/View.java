@@ -10,6 +10,7 @@ public abstract class View {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(generateText());
         sendMessage.setReplyMarkup(generateKeyboard(userCallbackRequest));
+        sendMessage.setChatId(userCallbackRequest.getChatId());
         return sendMessage;
     }
 

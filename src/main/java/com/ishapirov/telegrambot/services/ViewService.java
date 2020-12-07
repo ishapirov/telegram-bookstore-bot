@@ -1,6 +1,14 @@
 package com.ishapirov.telegrambot.services;
 
 import com.ishapirov.telegrambot.views.*;
+import com.ishapirov.telegrambot.views.basket.BasketView;
+import com.ishapirov.telegrambot.views.bookcatalog.CatalogMenuView;
+import com.ishapirov.telegrambot.views.bookcatalog.allbooks.BookCatalogView;
+import com.ishapirov.telegrambot.views.bookcatalog.kidbooks.KidBooksSelectAgeView;
+import com.ishapirov.telegrambot.views.bookcatalog.parentingbooks.ParentingBooksSelectCategoryView;
+import com.ishapirov.telegrambot.views.currency.CurrencySelectionView;
+import com.ishapirov.telegrambot.views.mainmenu.MainMenuView;
+import com.ishapirov.telegrambot.views.manager.ManagerContactInformationView;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,4 +36,11 @@ public class ViewService {
 
     public ManagerContactInformationView getManagerContactInformationView() { return (ManagerContactInformationView) viewMap.get("managercontactinformation");}
 
+    public KidBooksSelectAgeView getKidBooksSelectAgeView() { return (KidBooksSelectAgeView) viewMap.get("kidselect");}
+
+    public ParentingBooksSelectCategoryView getParentingBooksSelectCategoryView() { return (ParentingBooksSelectCategoryView) viewMap.get("parentingselect");}
+
+    public Map<String,View> getViewMap(){
+        return viewMap;
+    }
 }

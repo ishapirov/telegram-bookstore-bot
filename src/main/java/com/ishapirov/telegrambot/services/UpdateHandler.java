@@ -4,6 +4,7 @@ import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,7 +16,7 @@ public class UpdateHandler {
     @Autowired
     ViewService viewService;
 
-    public SendMessage handleUpdate(Update update){
+    public BotApiMethod<?> handleUpdate(Update update){
 
         if(update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
@@ -28,12 +29,11 @@ public class UpdateHandler {
         return null;
     }
 
-    private SendMessage handleCallback(CallbackQuery callbackQuery){
+    private BotApiMethod<?> handleCallback(CallbackQuery callbackQuery){
         UserCallbackRequest userCallbackRequest = new UserCallbackRequest(callbackQuery);
         View viewUserClickedOn = viewService.getView(userCallbackRequest.getViewInWhichButtonWasClicked());
         View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest.getButtonClicked(),userCallbackRequest);
         SendMessage sendMessage = nextViewToRender.generateSendMessage(userCallbackRequest);
-        sendMessage.setChatId(userCallbackRequest.getChatId());
         return sendMessage;
     }
 

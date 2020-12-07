@@ -1,9 +1,10 @@
-package com.ishapirov.telegrambot.views;
+package com.ishapirov.telegrambot.views.bookcatalog;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -25,17 +26,17 @@ public class CatalogMenuView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonKidBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.kids"));
-        buttonKidBooks.setCallbackData(getTypeString() + "-" + getKidsText());
+        buttonKidBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), kidsText()));
         InlineKeyboardButton buttonMomBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.moms"));
-        buttonMomBooks.setCallbackData(getTypeString() + "-" + getMomsText());
+        buttonMomBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), momsText()));
         keyboardButtonsRow1.add(buttonKidBooks);
         keyboardButtonsRow1.add(buttonMomBooks);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonCatalog= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.catalog"));
-        buttonCatalog.setCallbackData(getTypeString() + "-" + getCatalogText());
+        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), catalogText()));
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(getTypeString() + "-" + getBackText());
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
         keyboardButtonsRow2.add(buttonCatalog);
         keyboardButtonsRow2.add(buttonBack);
 
@@ -47,18 +48,16 @@ public class CatalogMenuView extends View {
         return inlineKeyboardMarkup;
     }
 
-    public String getKidsText(){
+    public String kidsText(){
         return "kids";
     }
-
-    public String getMomsText(){
+    public String momsText(){
         return "moms";
     }
-    public String getCatalogText(){
+    public String catalogText(){
         return "catalog";
     }
-
-    public String getBackText(){
+    public String backText(){
         return "back";
     }
 
@@ -69,13 +68,13 @@ public class CatalogMenuView extends View {
 
     @Override
     public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
-        if(messageText.equals(getKidsText()))
-            return viewService.getMainMenuView();
-        else if(messageText.equals(getMomsText()))
-            return viewService.getMainMenuView();
-        else if(messageText.equals(getCatalogText()))
+        if(messageText.equals(kidsText()))
+            return viewService.getKidBooksSelectAgeView();
+        else if(messageText.equals(momsText()))
+            return viewService.getParentingBooksSelectCategoryView();
+        else if(messageText.equals(catalogText()))
             return viewService.getBookCatalogView();
-        else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(getBackText()))
+        else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else throw new UnexpectedInputException("Unexpected input");
     }

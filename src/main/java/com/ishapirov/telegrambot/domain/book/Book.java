@@ -5,18 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+        name="book_type",
+        discriminatorType = DiscriminatorType.STRING)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Book {
+public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer bookNumber;
-    private String name;
+    private String bookISBN;
+    private String title;
     private String author;
+    private BigDecimal price;
     private String publisher;
     private Date publishingYear;
     private String description;
@@ -25,4 +30,6 @@ public abstract class Book {
     private byte[] picture;
 
     private String linkToAudioFile;
+
+
 }
