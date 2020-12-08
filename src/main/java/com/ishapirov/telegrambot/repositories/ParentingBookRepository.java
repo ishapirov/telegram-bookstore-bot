@@ -1,15 +1,15 @@
 package com.ishapirov.telegrambot.repositories;
 
 import com.ishapirov.telegrambot.domain.book.ParentingBook;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ParentingBookRepository extends PagingAndSortingRepository<ParentingBook,String> {
+public interface ParentingBookRepository extends JpaRepository<ParentingBook,String> {
     Optional<ParentingBook> findByBookISBN(String bookISBN);
-    Page<ParentingBook> findAll(Pageable pageable);
+    List<ParentingBook> findByParentingBookCategory(ParentingBookCategory parentingBookCategory);
 }

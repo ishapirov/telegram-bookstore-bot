@@ -16,4 +16,8 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 public class ParentingBook extends Book {
     private ParentingBookCategory parentingBookCategory;
+
+    public static String typeOfBook(){
+        return "parenting";
+    }
 }

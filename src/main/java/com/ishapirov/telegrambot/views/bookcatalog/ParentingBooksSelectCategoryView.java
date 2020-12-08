@@ -1,6 +1,8 @@
-package com.ishapirov.telegrambot.views.bookcatalog.parentingbooks;
+package com.ishapirov.telegrambot.views.bookcatalog;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.domain.book.ParentingBook;
+import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -26,17 +28,17 @@ public class ParentingBooksSelectCategoryView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonUpbringing = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.upbringing"));
-        buttonUpbringing.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), upbringing()));
+        buttonUpbringing.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), upbringing(), ParentingBook.typeOfBook(), ParentingBookCategory.UPBRINGING.name()));
         InlineKeyboardButton buttonPsychology = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.psychology"));
-        buttonPsychology.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), psychology()));
+        buttonPsychology.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), psychology(),ParentingBook.typeOfBook(),ParentingBookCategory.PSYCHOLOGY.name()));
         keyboardButtonsRow1.add(buttonUpbringing);
         keyboardButtonsRow1.add(buttonPsychology);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonInspiration= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.inspiration"));
-        buttonInspiration.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), inspiration()));
+        buttonInspiration.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), inspiration(),ParentingBook.typeOfBook(),ParentingBookCategory.INSPIRATION.name()));
         InlineKeyboardButton buttonAll= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.all"));
-        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), allBooks()));
+        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), allBooks(),ParentingBook.typeOfBook(),"all"));
         keyboardButtonsRow2.add(buttonInspiration);
         keyboardButtonsRow2.add(buttonAll);
 
@@ -81,13 +83,7 @@ public class ParentingBooksSelectCategoryView extends View {
 
     @Override
     public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
-        if(messageText.equals(upbringing()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(psychology()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(inspiration()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(allBooks()))
+        if(messageText.equals(upbringing()) || messageText.equals(psychology()) || messageText.equals(inspiration()) || messageText.equals(allBooks()))
             return viewService.getBookCatalogView();
         else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();

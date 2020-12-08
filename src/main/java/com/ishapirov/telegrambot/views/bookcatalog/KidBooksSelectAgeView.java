@@ -1,6 +1,8 @@
-package com.ishapirov.telegrambot.views.bookcatalog.kidbooks;
+package com.ishapirov.telegrambot.views.bookcatalog;
 
 import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.domain.book.KidBook;
+import com.ishapirov.telegrambot.domain.book.KidBookCategory;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.LocaleMessageService;
 import com.ishapirov.telegrambot.services.ViewService;
@@ -26,23 +28,23 @@ public class KidBooksSelectAgeView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonSixMonth = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.sixmonth"));
-        buttonSixMonth.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), sixMonth()));
+        buttonSixMonth.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), sixMonth(), KidBook.typeOfBook(),KidBookCategory.SIX_MONTHS_TO_EIGHTEEN_MONTHS.name()));
         InlineKeyboardButton buttonOneToThree = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.onetothree"));
-        buttonOneToThree.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), oneToThree()));
+        buttonOneToThree.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), oneToThree(),KidBook.typeOfBook(),KidBookCategory.EIGHTEEN_MONTHS_TO_THREE_YEARS.name()));
         keyboardButtonsRow1.add(buttonSixMonth);
         keyboardButtonsRow1.add(buttonOneToThree);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonThreeToFive= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.threetofive"));
-        buttonThreeToFive.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), threeToFive()));
+        buttonThreeToFive.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), threeToFive(), KidBook.typeOfBook(),KidBookCategory.THREE_YEARS_TO_FIVE_YEARS.name()));
         InlineKeyboardButton buttonFiveToSeven= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.fivetoseven"));
-        buttonFiveToSeven.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), fiveToSeven()));
+        buttonFiveToSeven.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), fiveToSeven(),KidBook.typeOfBook(),KidBookCategory.FIVE_YEARS_TO_SEVEN_YEARS.name()));
         keyboardButtonsRow2.add(buttonThreeToFive);
         keyboardButtonsRow2.add(buttonFiveToSeven);
 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         InlineKeyboardButton buttonAll = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.all"));
-        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), allBooks()));
+        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), allBooks(),KidBook.typeOfBook(),"all"));
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
         buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
         keyboardButtonsRow3.add(buttonAll);
@@ -81,6 +83,7 @@ public class KidBooksSelectAgeView extends View {
         return "back";
     }
 
+
     @Override
     protected String generateText() {
         return localeMessageService.getMessage("view.kidselect.generate");
@@ -88,15 +91,7 @@ public class KidBooksSelectAgeView extends View {
 
     @Override
     public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
-        if(messageText.equals(sixMonth()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(oneToThree()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(threeToFive()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(fiveToSeven()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(allBooks()))
+        if(messageText.equals(sixMonth()) || messageText.equals(oneToThree()) || messageText.equals(threeToFive()) || messageText.equals(fiveToSeven()) || messageText.equals(allBooks()))
             return viewService.getBookCatalogView();
         else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();

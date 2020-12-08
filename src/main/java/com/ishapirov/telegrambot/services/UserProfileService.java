@@ -32,4 +32,8 @@ public class UserProfileService {
         userProfileRepository.save(userProfile);
         return userProfile;
     }
+
+    public void saveProfile(UserProfile userProfile){
+        userProfileRepository.save(userProfile);
+    }
 }
