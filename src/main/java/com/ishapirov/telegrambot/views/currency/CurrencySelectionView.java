@@ -1,10 +1,10 @@
 package com.ishapirov.telegrambot.views.currency;
 
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.LocaleMessageService;
-import com.ishapirov.telegrambot.services.UserProfileService;
-import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
+import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

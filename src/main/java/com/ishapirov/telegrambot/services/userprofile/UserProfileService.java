@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.services;
+package com.ishapirov.telegrambot.services.userprofile;
 
 import com.ishapirov.telegrambot.domain.user.UserProfile;
 import com.ishapirov.telegrambot.repositories.UserProfileRepository;
@@ -25,6 +25,11 @@ public class UserProfileService {
         UserProfile userProfile = getUserProfile(userId);
         userProfile.setCurrency(currency);
         userProfileRepository.save(userProfile);
+    }
+
+    public Currency getCurrencyForUser(Integer userId){
+        UserProfile userProfile = getUserProfile(userId);
+        return userProfile.getCurrency();
     }
 
     private UserProfile createNewProfile(Integer userId) {

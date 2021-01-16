@@ -1,9 +1,9 @@
 package com.ishapirov.telegrambot.views.basket;
 
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.LocaleMessageService;
-import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
+import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,28 +26,33 @@ public class BasketView extends View {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        InlineKeyboardButton buttonPay = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.pay"));
+        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),payText()));
+        InlineKeyboardButton buttonViewRemove = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.viewremove"));
+        buttonViewRemove.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),viewRemoveText()));
+        keyboardButtonsRow1.add(buttonPay);
+        keyboardButtonsRow1.add(buttonViewRemove);
+
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
         buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText()));
-        keyboardButtonsRow1.add(buttonBack);
+        keyboardButtonsRow2.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
+        rowList.add(keyboardButtonsRow2);
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
     }
 
     @Override
-    public String generateText() {
-        return localeMessageService.getMessage("view.basket.generate");
-    }
-
-    public String backText(){
-        return "back";
-    }
-
-    @Override
     public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
-        if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
+        if(messageText.equals(viewRemoveText()))
+            return viewService.getViewAndEditBooksInBasketView();
+        else if(messageText.equals(payText()))
+            return viewService.getPaymentView();
+        else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else
             throw new UnexpectedInputException("Unexpected input");
@@ -56,5 +61,20 @@ public class BasketView extends View {
     @Override
     public String getTypeString() {
         return "basket";
+    }
+
+    @Override
+    public String generateText() {
+        return localeMessageService.getMessage("view.basket.generate");
+    }
+
+    public String payText(){
+        return "pay";
+    }
+    public String viewRemoveText(){
+        return "viewremove";
+    }
+    public String backText(){
+        return "back";
     }
 }

@@ -19,6 +19,6 @@ public class GlobalExceptionHandler {
         response.setStatus(500);
         response.setError("INTERNAL_SERVER_ERROR");
         response.setMessage(unexpectedInputException.getMessage());
-        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,12 +1,13 @@
 package com.ishapirov.telegrambot.views;
 
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 public abstract class View {
 
-    public SendMessage generateSendMessage(UserCallbackRequest userCallbackRequest){
+    public BotApiMethod<?> generateMessage(UserCallbackRequest userCallbackRequest){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(generateText());
         sendMessage.setReplyMarkup(generateKeyboard(userCallbackRequest));

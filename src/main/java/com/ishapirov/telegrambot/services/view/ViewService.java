@@ -1,14 +1,17 @@
-package com.ishapirov.telegrambot.services;
+package com.ishapirov.telegrambot.services.view;
 
 import com.ishapirov.telegrambot.views.*;
 import com.ishapirov.telegrambot.views.basket.BasketView;
+import com.ishapirov.telegrambot.views.basket.ViewAndEditBooksInBasketView;
 import com.ishapirov.telegrambot.views.bookcatalog.CatalogMenuView;
 import com.ishapirov.telegrambot.views.bookcatalog.BookCatalogView;
 import com.ishapirov.telegrambot.views.bookcatalog.KidBooksSelectAgeView;
 import com.ishapirov.telegrambot.views.bookcatalog.ParentingBooksSelectCategoryView;
+import com.ishapirov.telegrambot.views.booksordered.BooksOrderedView;
 import com.ishapirov.telegrambot.views.currency.CurrencySelectionView;
 import com.ishapirov.telegrambot.views.mainmenu.MainMenuView;
 import com.ishapirov.telegrambot.views.manager.ManagerContactInformationView;
+import com.ishapirov.telegrambot.views.payment.PaymentView;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,6 +43,13 @@ public class ViewService {
 
     public ParentingBooksSelectCategoryView getParentingBooksSelectCategoryView() { return (ParentingBooksSelectCategoryView) viewMap.get("parentingselect");}
 
+    public PaymentView getPaymentView() { return (PaymentView) viewMap.get("payment");};
+
+    public ViewAndEditBooksInBasketView getViewAndEditBooksInBasketView(){ return (ViewAndEditBooksInBasketView) viewMap.get("viewandedit");}
+
+    public BooksOrderedView getBooksOrderedView(){
+        return (BooksOrderedView) viewMap.get("booksordered");
+    }
     public Map<String,View> getViewMap(){
         return viewMap;
     }

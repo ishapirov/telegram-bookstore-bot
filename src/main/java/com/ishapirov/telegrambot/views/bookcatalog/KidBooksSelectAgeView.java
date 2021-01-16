@@ -1,11 +1,11 @@
 package com.ishapirov.telegrambot.views.bookcatalog;
 
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.domain.book.KidBook;
 import com.ishapirov.telegrambot.domain.book.KidBookCategory;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.LocaleMessageService;
-import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
+import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class KidBooksSelectAgeView extends View {
         InlineKeyboardButton buttonSixMonth = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.sixmonth"));
         buttonSixMonth.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), sixMonth(), KidBook.typeOfBook(),KidBookCategory.SIX_MONTHS_TO_EIGHTEEN_MONTHS.name()));
         InlineKeyboardButton buttonOneToThree = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.onetothree"));
-        buttonOneToThree.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), oneToThree(),KidBook.typeOfBook(),KidBookCategory.EIGHTEEN_MONTHS_TO_THREE_YEARS.name()));
+        buttonOneToThree.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), oneToThree(),KidBook.typeOfBook(),KidBookCategory.ONE_TO_THREE.name()));
         keyboardButtonsRow1.add(buttonSixMonth);
         keyboardButtonsRow1.add(buttonOneToThree);
 
@@ -54,8 +54,8 @@ public class KidBooksSelectAgeView extends View {
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
-
         inlineKeyboardMarkup.setKeyboard(rowList);
+
         return inlineKeyboardMarkup;
     }
 

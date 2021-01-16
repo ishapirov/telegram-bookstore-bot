@@ -4,7 +4,7 @@ import com.ishapirov.telegrambot.domain.book.KidBook;
 import com.ishapirov.telegrambot.domain.book.KidBookCategory;
 import com.ishapirov.telegrambot.domain.book.ParentingBook;
 import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
-import com.ishapirov.telegrambot.services.BookRetrieve;
+import com.ishapirov.telegrambot.services.bookservices.BookInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 @Component
 public class SampleData {
     @Autowired
-    BookRetrieve bookRetrieve;
+    BookInventoryService bookInventoryService;
 
 
     @EventListener
@@ -41,7 +41,9 @@ public class SampleData {
         parentingBook.setPublishingYear(simpleDateFormat.parse("2014-02-14"));
         parentingBook.setPrice(BigDecimal.valueOf(9.95));
 
-        bookRetrieve.saveParentingBook(parentingBook);
+
+        bookInventoryService.saveParentingBook(parentingBook,1);
+
 
         jsaCoverImgFile = new ClassPathResource("static/images/hungrycaterpillar.jpg");
         arrayData = new byte[(int) jsaCoverImgFile.contentLength()];
@@ -49,7 +51,7 @@ public class SampleData {
         KidBook kidBook = new KidBook();
         kidBook.setBookISBN("0141380934");
         kidBook.setAuthor("Eric Carle");
-        kidBook.setKidBookCategory(KidBookCategory.EIGHTEEN_MONTHS_TO_THREE_YEARS);
+        kidBook.setKidBookCategory(KidBookCategory.ONE_TO_THREE);
         kidBook.setDescription("The Very Hungry Caterpillar is a classic which explores many philosophical themes such as justice and democracy");
         kidBook.setLinkToAudioFile("https://www.youtube.com/watch?v=75NQK-Sm1YY&ab_channel=IlluminatedFilms");
         kidBook.setPicture(arrayData);
@@ -58,6 +60,6 @@ public class SampleData {
         kidBook.setPublishingYear(simpleDateFormat.parse("1969-06-03"));
         kidBook.setPrice(BigDecimal.valueOf(14.11));
 
-        bookRetrieve.saveKidBook(kidBook);
+        bookInventoryService.saveKidBook(kidBook,3);
     }
 }

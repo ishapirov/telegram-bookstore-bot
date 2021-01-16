@@ -1,10 +1,10 @@
 package com.ishapirov.telegrambot.views.mainmenu;
 
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.LocaleMessageService;
-import com.ishapirov.telegrambot.services.UserProfileService;
-import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
+import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +43,15 @@ public class MainMenuView extends View {
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
 
+        List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        InlineKeyboardButton buttonOrders = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.orders"));
+        buttonOrders.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),ordersText()));
+        keyboardButtonsRow3.add(buttonOrders);
+
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
+        rowList.add(keyboardButtonsRow3);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
@@ -71,6 +77,10 @@ public class MainMenuView extends View {
         return "currency";
     }
 
+    private String ordersText() {
+        return "orders";
+    }
+
     @Override
     public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
         if(messageText.equals(getTypeString()) || messageText.equals("back"))
@@ -83,6 +93,8 @@ public class MainMenuView extends View {
             return viewService.getManagerContactInformationView();
         else if(messageText.startsWith(currencyText()))
             return viewService.getCurrencySelectionView();
+        else if(messageText.startsWith(ordersText()))
+            return viewService.getBooksOrderedView();
         else throw new UnexpectedInputException("Unexpected input");
     }
 

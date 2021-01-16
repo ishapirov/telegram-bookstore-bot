@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.services;
+package com.ishapirov.telegrambot.services.localemessage;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

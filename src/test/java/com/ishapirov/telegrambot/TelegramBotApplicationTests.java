@@ -1,8 +1,8 @@
 package com.ishapirov.telegrambot;
 
 import com.ishapirov.telegrambot.controller.WebHookController;
-import com.ishapirov.telegrambot.domain.UserCallbackRequest;
-import com.ishapirov.telegrambot.services.ViewService;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
+import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.testdomain.CustomCallback;
 import com.ishapirov.telegrambot.testdomain.CustomMessage;
 import com.ishapirov.telegrambot.testdomain.CustomUser;

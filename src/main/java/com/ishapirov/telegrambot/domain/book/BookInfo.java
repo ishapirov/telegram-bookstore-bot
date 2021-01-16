@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class BookInfo {
     private Book book;
+    private Integer quantity;
     private boolean hasNext;
 }
