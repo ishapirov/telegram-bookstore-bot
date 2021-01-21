@@ -27,16 +27,16 @@ public class BasketView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonPay = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.pay"));
-        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),payText()));
+        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),payText(),true));
         InlineKeyboardButton buttonViewRemove = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.viewremove"));
-        buttonViewRemove.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),viewRemoveText()));
+        buttonViewRemove.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),viewRemoveText(),false));
         keyboardButtonsRow1.add(buttonPay);
         keyboardButtonsRow1.add(buttonViewRemove);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText(),true));
         keyboardButtonsRow2.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

@@ -12,7 +12,7 @@ import com.ishapirov.telegrambot.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -37,18 +37,20 @@ public class BooksOrderedView extends View {
     public BotApiMethod<?> generateMessage(UserCallbackRequest userCallbackRequest){
         List<ShippingOrder> shippingOrders = ordersService.getUserShippingOrders(userCallbackRequest.getUserId());
         if(shippingOrders.size() == 0){
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(userCallbackRequest.getChatId());
-            sendMessage.setText(emptyText());
-            sendMessage.setReplyMarkup(emptyKeyboard());
-            return sendMessage;
+            EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setChatId(userCallbackRequest.getChatId());
+            editMessageText.setMessageId(userCallbackRequest.getMessageId());
+            editMessageText.setText(emptyText());
+            editMessageText.setReplyMarkup(emptyKeyboard());
+            return editMessageText;
         }
         else{
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(userCallbackRequest.getChatId());
-            sendMessage.setText(generateText() + orderInfo(shippingOrders));
-            sendMessage.setReplyMarkup(generateKeyboard(userCallbackRequest));
-            return sendMessage;
+            EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setChatId(userCallbackRequest.getChatId());
+            editMessageText.setMessageId(userCallbackRequest.getMessageId());
+            editMessageText.setText(generateText() + orderInfo(shippingOrders));
+            editMessageText.setReplyMarkup(generateKeyboard(userCallbackRequest));
+            return editMessageText;
         }
     }
 
@@ -62,7 +64,7 @@ public class BooksOrderedView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText(),false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -78,7 +80,7 @@ public class BooksOrderedView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText(),false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

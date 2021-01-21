@@ -29,23 +29,23 @@ public class MainMenuView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.catalog"));
-        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),catalogText()));
+        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),catalogText(),true));
         InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.basket"));
-        buttonBasket.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),basketText()));
+        buttonBasket.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),basketText(),true));
         keyboardButtonsRow1.add(buttonCatalog);
         keyboardButtonsRow1.add(buttonBasket);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager"));
-        buttonManager.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),managerText()));
+        buttonManager.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),managerText(),true));
         InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency") +" (" + userProfileService.getUserProfile(userCallbackRequest.getUserId()).getCurrency() + ")");
-        buttonCurrency.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),currencyText()));
+        buttonCurrency.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),currencyText(),true));
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         InlineKeyboardButton buttonOrders = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.orders"));
-        buttonOrders.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),ordersText()));
+        buttonOrders.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),ordersText(),true));
         keyboardButtonsRow3.add(buttonOrders);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

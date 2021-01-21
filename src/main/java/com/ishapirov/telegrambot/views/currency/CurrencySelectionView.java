@@ -30,17 +30,17 @@ public class CurrencySelectionView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonUSD = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.usd"));
-        buttonUSD.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), usdText()));
+        buttonUSD.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), usdText(),true));
         InlineKeyboardButton buttonSUM = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.sum"));
-        buttonSUM.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), sumText()));
+        buttonSUM.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), sumText(),true));
         keyboardButtonsRow1.add(buttonUSD);
         keyboardButtonsRow1.add(buttonSUM);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonRUB = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.currency.rub"));
-        buttonRUB.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), rubText()));
+        buttonRUB.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), rubText(),true));
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
         keyboardButtonsRow2.add(buttonRUB);
         keyboardButtonsRow2.add(buttonBack);
 

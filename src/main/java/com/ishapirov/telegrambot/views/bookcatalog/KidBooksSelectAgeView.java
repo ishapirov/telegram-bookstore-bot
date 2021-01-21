@@ -46,7 +46,7 @@ public class KidBooksSelectAgeView extends View {
         InlineKeyboardButton buttonAll = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.kidselect.all"));
         buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), allBooks(),KidBook.typeOfBook(),"all"));
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
         keyboardButtonsRow3.add(buttonAll);
         keyboardButtonsRow3.add(buttonBack);
 

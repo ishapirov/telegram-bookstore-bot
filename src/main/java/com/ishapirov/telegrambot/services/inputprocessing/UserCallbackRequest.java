@@ -22,7 +22,7 @@ public class UserCallbackRequest {
     private String bookSubType;
     private Integer index;
     private Integer quantity;
-    private boolean editMessageNeeded;
+    private boolean editMessagePreferred;
 
 
     public UserCallbackRequest(CallbackQuery callbackQuery){
@@ -41,7 +41,7 @@ public class UserCallbackRequest {
         this.bookSubType = callbackParts[3];
         this.index = Integer.parseInt(callbackParts[4]);
         this.quantity = Integer.parseInt(callbackParts[5]);
-        this.editMessageNeeded = Boolean.parseBoolean(callbackParts[6]);
+        this.editMessagePreferred = Boolean.parseBoolean(callbackParts[6]);
     }
 
     public UserCallbackRequest(Message message){
@@ -54,11 +54,11 @@ public class UserCallbackRequest {
     public String generateQueryMessage(){
         return this.viewInWhichButtonWasClicked + SEPARATOR + this.buttonClicked + SEPARATOR +
                 this.bookType + SEPARATOR + this.bookSubType + SEPARATOR + this.index + SEPARATOR +
-                this.quantity + SEPARATOR + this.editMessageNeeded;
+                this.quantity + SEPARATOR + this.editMessagePreferred;
     }
 
-    public static String generateQueryMessage(String viewInWhichButtonWasClicked,String buttonClicked){
-        return viewInWhichButtonWasClicked + SEPARATOR + buttonClicked + SEPARATOR + "all" + SEPARATOR + "none" +  SEPARATOR + "0" + SEPARATOR +"1" + SEPARATOR + false;
+    public static String generateQueryMessage(String viewInWhichButtonWasClicked,String buttonClicked,boolean editMessageNeeded){
+        return viewInWhichButtonWasClicked + SEPARATOR + buttonClicked + SEPARATOR + "all" + SEPARATOR + "none" +  SEPARATOR + "0" + SEPARATOR +"1" + SEPARATOR + editMessageNeeded;
     }
 
     public static String generateQueryMessageWithFilter(String viewInWhichButtonWasClicked,String buttonClicked,String bookType, String bookSubType){

@@ -26,7 +26,7 @@ public class ManagerContactInformationView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText(),true));
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

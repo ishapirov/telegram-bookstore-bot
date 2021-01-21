@@ -58,7 +58,7 @@ public class BookCatalogView extends View {
         if (bookInfo == null)
             return noBooksSendMessage(userCallbackRequest);
         userCallbackRequest.setBookInfo(bookInfo);
-        if(!userCallbackRequest.isEditMessageNeeded()) {
+        if(!userCallbackRequest.isEditMessagePreferred()) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setText(generateBookText(bookInfo.getBook(), userCallbackRequest));
             sendMessage.setChatId(userCallbackRequest.getChatId());
@@ -95,8 +95,12 @@ public class BookCatalogView extends View {
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
 
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.mainmenu"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText(),true));
         keyboardRow.add(buttonMainMenu);
+
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCategoryText(),true));
+        keyboardRow.add(buttonBack);
         rowList.add(keyboardRow);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
@@ -168,7 +172,7 @@ public class BookCatalogView extends View {
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         InlineKeyboardButton buttonAddToCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.addtocart"));
         buttonAddToCart.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(getTypeString(),cartText(),userCallbackRequest.getBookType(),userCallbackRequest.getBookSubType()
-                , String.valueOf(userCallbackRequest.getIndex()), String.valueOf(userCallbackRequest.getQuantity()), String.valueOf(userCallbackRequest.isEditMessageNeeded())));
+                , String.valueOf(userCallbackRequest.getIndex()), String.valueOf(userCallbackRequest.getQuantity()), String.valueOf(userCallbackRequest.isEditMessagePreferred())));
         keyboardRow.add(buttonAddToCart);
         return keyboardRow;
     }
@@ -176,10 +180,10 @@ public class BookCatalogView extends View {
     public List<InlineKeyboardButton> mainMenuCartButtons(){
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.mainmenu"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText(),false));
 
         InlineKeyboardButton buttonYourCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.generate"));
-        buttonYourCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),yourCartText()));
+        buttonYourCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),yourCartText(),false));
 
         keyboardRow.add(buttonMainMenu);
         keyboardRow.add(buttonYourCart);
@@ -194,12 +198,13 @@ public class BookCatalogView extends View {
         return keyboardRow;
     }
 
-    private SendMessage noBooksSendMessage(UserCallbackRequest userCallbackRequest) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(noBooks());
-        sendMessage.setReplyMarkup(noBooksKeyboard());
-        sendMessage.setChatId(userCallbackRequest.getChatId());
-        return sendMessage;
+    private EditMessageText noBooksSendMessage(UserCallbackRequest userCallbackRequest) {
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(userCallbackRequest.getChatId());
+        editMessageText.setMessageId(userCallbackRequest.getMessageId());
+        editMessageText.setText(noBooks());
+        editMessageText.setReplyMarkup(noBooksKeyboard());
+        return editMessageText;
     }
 
     private String noBooks() {
@@ -221,6 +226,8 @@ public class BookCatalogView extends View {
     public String backText(){
         return "back";
     }
+
+    public String backToCategoryText() { return "backcategory";} //BACK BASE ON CATEGORY
 
     public String cartText(){
         return "addtocart";
@@ -281,6 +288,8 @@ public class BookCatalogView extends View {
             return viewService.getMainMenuView();
         else if(messageText.equals(yourCartText()))
             return viewService.getBasketView();
+        else if(messageText.equals(backToCategoryText()))
+            return viewService.getCatalogMenuView();
         else throw new UnexpectedInputException("Unexpected input");
     }
 

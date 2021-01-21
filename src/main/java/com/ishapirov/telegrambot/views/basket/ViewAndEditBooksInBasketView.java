@@ -50,7 +50,7 @@ public class ViewAndEditBooksInBasketView extends View {
         if(bookInfo == null)
             return emptyEditMessage(userCallbackRequest);
         userCallbackRequest.setBookInfo(bookInfo);
-        if(userCallbackRequest.isEditMessageNeeded()){
+        if(userCallbackRequest.isEditMessagePreferred()){
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setText(generateBookText(userCallbackRequest));
             editMessageText.setMessageId(userCallbackRequest.getMessageId());
@@ -82,10 +82,10 @@ public class ViewAndEditBooksInBasketView extends View {
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
 
         InlineKeyboardButton buttonCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.viewandedit.return"));
-        buttonCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCartText()));
+        buttonCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCartText(),false));
 
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),menuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),menuText(),false));
 
         keyboardRow.add(buttonCart);
         keyboardRow.add(buttonMainMenu);
@@ -141,7 +141,7 @@ public class ViewAndEditBooksInBasketView extends View {
     public List<InlineKeyboardButton> cartButton(){
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         InlineKeyboardButton buttonCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.viewandedit.return"));
-        buttonCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCartText()));
+        buttonCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCartText(),false));
 
         keyboardRow.add(buttonCart);
         return keyboardRow;

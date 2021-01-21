@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class PaymentView extends View {
     CartService cartService;
 
     @Override
+    @Transactional
     public BotApiMethod<?> generateMessage(UserCallbackRequest userCallbackRequest){
         if(cartService.getCart(userCallbackRequest.getUserId()).getBooksInCart().size() == 0)
             return emptyCartMessage(userCallbackRequest);
@@ -75,11 +77,11 @@ public class PaymentView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText()));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText(),true));
         keyboardButtonsRow1.add(buttonMainMenu);
 
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -100,12 +102,12 @@ public class PaymentView extends View {
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
 
         InlineKeyboardButton buttonPay = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.payment.pay"));
-        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),payText()));
+        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),payText(),true));
         buttonPay.setPay(true);
         keyboardButtonsRow1.add(buttonPay);
 
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText(),true));
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

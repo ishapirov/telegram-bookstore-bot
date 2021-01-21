@@ -26,17 +26,17 @@ public class CatalogMenuView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonKidBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.kids"));
-        buttonKidBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), kidsText()));
+        buttonKidBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), kidsText(),true));
         InlineKeyboardButton buttonMomBooks = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.moms"));
-        buttonMomBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), momsText()));
+        buttonMomBooks.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), momsText(),true));
         keyboardButtonsRow1.add(buttonKidBooks);
         keyboardButtonsRow1.add(buttonMomBooks);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonCatalog= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.catalogMenu.catalog"));
-        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), catalogText()));
+        buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), catalogText(),true));
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
         keyboardButtonsRow2.add(buttonCatalog);
         keyboardButtonsRow2.add(buttonBack);
 

@@ -7,7 +7,6 @@ import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
 import com.ishapirov.telegrambot.services.bookservices.BookInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,7 @@ public class SampleData {
     BookInventoryService bookInventoryService;
 
 
-    @EventListener
+//    @EventListener
     public void appReady(ApplicationReadyEvent event) throws IOException, ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 

@@ -44,7 +44,7 @@ public class ParentingBooksSelectCategoryView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText()));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
         keyboardButtonsRow3.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
