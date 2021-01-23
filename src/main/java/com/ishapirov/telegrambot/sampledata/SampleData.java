@@ -22,7 +22,7 @@ public class SampleData {
 
 
 //    @EventListener
-    public void appReady(ApplicationReadyEvent event) throws IOException, ParseException {
+     public void appReady(ApplicationReadyEvent event) throws IOException, ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         ClassPathResource jsaCoverImgFile = new ClassPathResource("static/images/platorepublic.jpg");

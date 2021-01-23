@@ -90,7 +90,8 @@ public class KidBooksSelectAgeView extends View {
     }
 
     @Override
-    public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(sixMonth()) || messageText.equals(oneToThree()) || messageText.equals(threeToFive()) || messageText.equals(fiveToSeven()) || messageText.equals(allBooks()))
             return viewService.getBookCatalogView();
         else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))

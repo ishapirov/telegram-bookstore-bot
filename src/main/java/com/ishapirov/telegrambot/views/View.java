@@ -29,6 +29,6 @@ public abstract class View {
     public abstract String getTypeString();
     protected abstract InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest);
     protected abstract String generateText();
-    public abstract View getNextView(String messageText, UserCallbackRequest userCallbackRequest);
+    public abstract View getNextView(UserCallbackRequest userCallbackRequest);
 
 }

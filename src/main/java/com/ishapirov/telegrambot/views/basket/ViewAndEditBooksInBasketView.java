@@ -161,7 +161,8 @@ public class ViewAndEditBooksInBasketView extends View {
 
     @Override
     @Transactional
-    public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(menuText()))
             return viewService.getMainMenuView();
         else if(messageText.equals(removeText())){

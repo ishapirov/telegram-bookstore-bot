@@ -71,8 +71,8 @@ public class CurrencySelectionView extends View {
     }
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
-        System.out.println(messageText);
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if (messageText.equals(usdText()) || messageText.equals(sumText()) || messageText.equals(rubText())) {
             userProfileService.setCurrencyForUser(userCallbackRequest.getUserId(), getCurrencyFromString(messageText));
             return viewService.getMainMenuView();

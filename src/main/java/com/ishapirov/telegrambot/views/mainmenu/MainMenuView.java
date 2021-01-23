@@ -82,7 +82,8 @@ public class MainMenuView extends View {
     }
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(getTypeString()) || messageText.equals("back"))
             return viewService.getMainMenuView();
         else if(messageText.equals(catalogText()))

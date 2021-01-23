@@ -47,7 +47,8 @@ public class BasketView extends View {
     }
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(viewRemoveText()))
             return viewService.getViewAndEditBooksInBasketView();
         else if(messageText.equals(payText()))

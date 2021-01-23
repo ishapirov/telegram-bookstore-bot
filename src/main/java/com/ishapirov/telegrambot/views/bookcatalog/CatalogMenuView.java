@@ -67,7 +67,8 @@ public class CatalogMenuView extends View {
     }
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(kidsText()))
             return viewService.getKidBooksSelectAgeView();
         else if(messageText.equals(momsText()))

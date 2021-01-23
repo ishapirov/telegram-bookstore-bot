@@ -33,7 +33,7 @@ public class SuccessfulPaymentService {
         Integer userId = message.getFrom().getId();
         Cart cart = cartService.getCart(userId);
         ordersService.createShippingOrder(cart,message);
-        addRemoveBookToCartService.successfulPurchase(cart);
+        addRemoveBookToCartService.removeAllBooksFromCart(cart);
         return orderProcessedMessage(message);
     }
 

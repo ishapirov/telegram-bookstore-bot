@@ -38,6 +38,10 @@ public class UserProfileService {
         return userProfile;
     }
 
+    public boolean doesProfileExist(Integer userId){
+        return userProfileRepository.existsById(userId);
+    }
+
     public void saveProfile(UserProfile userProfile){
         userProfileRepository.save(userProfile);
     }

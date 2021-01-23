@@ -141,7 +141,8 @@ public class PaymentView extends View {
     }
 
     @Override
-    public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(mainMenuText()))
             return viewService.getMainMenuView();
         else if(messageText.equals(backText()))

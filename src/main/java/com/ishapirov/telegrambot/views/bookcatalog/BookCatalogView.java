@@ -260,7 +260,8 @@ public class BookCatalogView extends View {
 
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(forwardText())){
             userCallbackRequest.setIndex(userCallbackRequest.getIndex()+1);
             return viewService.getBookCatalogView();

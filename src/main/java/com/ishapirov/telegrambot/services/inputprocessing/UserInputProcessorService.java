@@ -54,7 +54,7 @@ public class UserInputProcessorService {
             return null;
         UserCallbackRequest userCallbackRequest = new UserCallbackRequest(callbackQuery);
         View viewUserClickedOn = viewService.getView(userCallbackRequest.getViewInWhichButtonWasClicked());
-        View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest.getButtonClicked(),userCallbackRequest);
+        View nextViewToRender = viewUserClickedOn.getNextView(userCallbackRequest);
         return nextViewToRender.generateMessage(userCallbackRequest);
     }
 

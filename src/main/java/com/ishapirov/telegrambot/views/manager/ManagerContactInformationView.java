@@ -45,7 +45,8 @@ public class ManagerContactInformationView extends View {
     }
 
     @Override
-    public View getNextView(String messageText,UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
             return viewService.getMainMenuView();
         else

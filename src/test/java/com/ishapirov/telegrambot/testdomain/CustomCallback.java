@@ -9,11 +9,13 @@ public class CustomCallback extends CallbackQuery {
     private String data;
     private User user;
     private Message message;
+    private String callbackId;
 
-    public CustomCallback(String data, User user, Message message) {
+    public CustomCallback(String data, User user, Message message,String callbackId) {
         this.data = data;
         this.user = user;
         this.message = message;
+        this.callbackId = callbackId;
     }
 
     public User getFrom(){
@@ -27,4 +29,6 @@ public class CustomCallback extends CallbackQuery {
     public String getData(){
         return this.data;
     }
+
+    public String getId(){return this.callbackId;}
 }

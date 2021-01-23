@@ -46,7 +46,7 @@ public class AddRemoveBookToCartService {
         bookAddedToCartRepository.save(bookAddedToCart);
     }
 
-    public void successfulPurchase(Cart cart){
+    public void removeAllBooksFromCart(Cart cart){
         for(BookAddedToCart bookAddedToCart:cart.getBooksInCart()){
             removeBookFromCart(bookAddedToCart);
             bookInventoryService.subtractQuantity(bookAddedToCart.getBook().getBookISBN(),bookAddedToCart.getQuantity());

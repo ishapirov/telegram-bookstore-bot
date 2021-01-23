@@ -82,7 +82,8 @@ public class ParentingBooksSelectCategoryView extends View {
     }
 
     @Override
-    public View getNextView(String messageText, UserCallbackRequest userCallbackRequest) {
+    public View getNextView(UserCallbackRequest userCallbackRequest) {
+        String messageText = userCallbackRequest.getButtonClicked();
         if(messageText.equals(upbringing()) || messageText.equals(psychology()) || messageText.equals(inspiration()) || messageText.equals(allBooks()))
             return viewService.getBookCatalogView();
         else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
