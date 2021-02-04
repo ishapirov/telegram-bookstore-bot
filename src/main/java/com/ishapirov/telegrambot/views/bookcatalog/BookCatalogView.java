@@ -1,22 +1,12 @@
 package com.ishapirov.telegrambot.views.bookcatalog;
 
 import com.ishapirov.telegrambot.bot.Bot;
+import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.domain.book.Book;
-import com.ishapirov.telegrambot.domain.book.BookInfo;
-import com.ishapirov.telegrambot.domain.cart.Cart;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.BookAlreadyInCartException;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.LessBooksAvailableThanRequestedException;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.bookservices.BookInventoryService;
-import com.ishapirov.telegrambot.services.bookservices.BookRetrievalService;
-import com.ishapirov.telegrambot.services.cartservices.AddRemoveBookToCartService;
-import com.ishapirov.telegrambot.services.cartservices.CartService;
-import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
-import com.ishapirov.telegrambot.services.view.ViewService;
-import com.ishapirov.telegrambot.views.View;
-import com.ishapirov.telegrambot.services.currency.CurrencyConversionRate;
+import com.ishapirov.telegrambot.views.TelegramView;
+import com.ishapirov.telegrambot.views.bookcatalog.dto.BookCatalogViewInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -29,59 +19,52 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.ByteArrayInputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BookCatalogView extends View {
-    @Autowired
-    ViewService viewService;
-    @Autowired
-    BookRetrievalService bookRetrievalService;
+public class BookCatalogView implements TelegramView {
     @Autowired
     LocaleMessageService localeMessageService;
     @Autowired
     Bot bot;
-    @Autowired
-    CartService cartService;
-    @Autowired
-    AddRemoveBookToCartService addRemoveBookToCartService;
-    @Autowired
-    BookInventoryService bookInventoryService;
-    @Autowired
-    CurrencyConversionService currencyConversionService;
+
+    public static final String TYPE_STRING = "bookcatalog";
 
     @Override
-    public BotApiMethod<?> generateMessage(UserCallbackRequest userCallbackRequest){
-        BookInfo bookInfo = bookRetrievalService.getBook(userCallbackRequest);
-        if (bookInfo == null)
-            return noBooksSendMessage(userCallbackRequest);
-        userCallbackRequest.setBookInfo(bookInfo);
-        if(!userCallbackRequest.isEditMessagePreferred()) {
+    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId,String callbackId, boolean editMessagePreferred) {
+        BookCatalogViewInfo bookInfo = (BookCatalogViewInfo) object;
+        if(bookInfo.isNoBooksInCatalog())
+            return noBooksSendMessage(chatId,messageId);
+        if(bookInfo.isAddedToCartMessage())
+            addedToCartMessage(callbackId);
+        if(bookInfo.isBookAlreadyInCart())
+            bookAlreadyInCart(callbackId);
+        if(bookInfo.isLessBooksAvailable())
+            lessBooksAvailableThanRequested(callbackId);
+        if(!editMessagePreferred) {
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setText(generateBookText(bookInfo.getBook(), userCallbackRequest));
-            sendMessage.setChatId(userCallbackRequest.getChatId());
-            sendMessage.setReplyMarkup(generateKeyboard(userCallbackRequest));
-            sendBookPhoto(userCallbackRequest, bookInfo.getBook());
+            sendMessage.setText(generateBookText(bookInfo.getBook(), bookInfo.getConvertedPrice()));
+            sendMessage.setChatId(chatId);
+            sendMessage.setReplyMarkup(generateKeyboard(bookInfo));
+            sendBookPhoto(chatId, bookInfo.getBook());
             return sendMessage;
         } else {
             EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setText(generateBookText(bookInfo.getBook(),userCallbackRequest));
-            editMessageText.setChatId(userCallbackRequest.getChatId());
-            editMessageText.setMessageId(userCallbackRequest.getMessageId());
-            editMessageText.setReplyMarkup(generateKeyboard(userCallbackRequest));
+            editMessageText.setText(generateBookText(bookInfo.getBook(),bookInfo.getConvertedPrice()));
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
+            editMessageText.setReplyMarkup(generateKeyboard(bookInfo));
             return editMessageText;
         }
     }
 
-    @Override
-    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
+    public InlineKeyboardMarkup generateKeyboard(BookCatalogViewInfo bookInfo) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
 
-        rowList.add(forwardBackButtons(userCallbackRequest));
-        rowList.addAll(bookQuantityAddToCartButtons(userCallbackRequest));
+        rowList.add(forwardBackButtons(bookInfo));
+        rowList.addAll(bookQuantityAddToCartButtons(bookInfo));
         rowList.add(mainMenuCartButtons());
 
         inlineKeyboardMarkup.setKeyboard(rowList);
@@ -95,11 +78,11 @@ public class BookCatalogView extends View {
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
 
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.mainmenu"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText(),true));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,true));
         keyboardRow.add(buttonMainMenu);
 
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backToCategoryText(),true));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_CATALOG_MENU,true));
         keyboardRow.add(buttonBack);
         rowList.add(keyboardRow);
 
@@ -108,9 +91,9 @@ public class BookCatalogView extends View {
     }
 
 
-    public void sendBookPhoto(UserCallbackRequest userCallbackRequest,Book book) {
+    public void sendBookPhoto(long chatId,Book book) {
         SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setChatId(userCallbackRequest.getChatId());
+        sendPhoto.setChatId(chatId);
         sendPhoto.setPhoto(book.getTitle(),new ByteArrayInputStream(book.getPicture()));
         try {
             bot.execute(sendPhoto);
@@ -119,60 +102,57 @@ public class BookCatalogView extends View {
         }
     }
 
-    public List<InlineKeyboardButton> forwardBackButtons(UserCallbackRequest userCallbackRequest){
+    public List<InlineKeyboardButton> forwardBackButtons(BookCatalogViewInfo bookInfo){
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
 
-        if(userCallbackRequest.getIndex() > 0){
+        if(bookInfo.getIndex() > 0){
             InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-            buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndex(getTypeString(),backText(),userCallbackRequest.getBookType(),userCallbackRequest.getBookSubType(), String.valueOf(userCallbackRequest.getIndex())));
+            buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndex(ButtonAction.BACK_A_BOOK_IN_CATALOG,bookInfo.getBookType(),bookInfo.getBookSubType(), String.valueOf(bookInfo.getIndex())));
             keyboardRow.add(buttonBack);
         }
-        if(userCallbackRequest.getBookInfo().isHasNext()){
+        if(bookInfo.isHasNext()){
             InlineKeyboardButton buttonForward = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.forward"));
-            buttonForward.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndex(getTypeString(),forwardText(),userCallbackRequest.getBookType(),userCallbackRequest.getBookSubType(), String.valueOf(userCallbackRequest.getIndex())));
+            buttonForward.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndex(ButtonAction.FORWARD_A_BOOK_IN_CATALOG,bookInfo.getBookType(),bookInfo.getBookSubType(), String.valueOf(bookInfo.getIndex())));
             keyboardRow.add(buttonForward);
         }
         return keyboardRow;
     }
 
-    public List<List<InlineKeyboardButton>> bookQuantityAddToCartButtons(UserCallbackRequest userCallbackRequest){
-
+    public List<List<InlineKeyboardButton>> bookQuantityAddToCartButtons(BookCatalogViewInfo bookInfo){
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
-        int quantity = bookInventoryService.getQuantity(userCallbackRequest.getBookInfo().getBook().getBookISBN());
 
-        if(quantity == 0){
+        if(bookInfo.getBookQuantityAvailable() == 0){
             rowList.add(outOfStockButton());
             return rowList;
         }
 
-        if(userCallbackRequest.getQuantity() > 1) {
+        if(bookInfo.getBookQuantitySelected() > 1) {
             InlineKeyboardButton decreaseQuantityButton = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.decrement"));
-            decreaseQuantityButton.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(getTypeString(), decrementText(), userCallbackRequest.getBookType(), userCallbackRequest.getBookSubType()
-                    , String.valueOf(userCallbackRequest.getIndex()), String.valueOf(userCallbackRequest.getQuantity() - 1), String.valueOf(true)));
+            decreaseQuantityButton.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(ButtonAction.DECREASE_QUANTITY, bookInfo.getBookType(), bookInfo.getBookSubType()
+                    , String.valueOf(bookInfo.getIndex()), String.valueOf(bookInfo.getBookQuantitySelected()), String.valueOf(true)));
             keyboardRow.add(decreaseQuantityButton);
         }
-        InlineKeyboardButton quantityButton = new InlineKeyboardButton().setText(String.valueOf(userCallbackRequest.getQuantity()));
+        InlineKeyboardButton quantityButton = new InlineKeyboardButton().setText(String.valueOf(bookInfo.getBookQuantitySelected()));
         quantityButton.setCallbackData("none");
         keyboardRow.add(quantityButton);
 
-        if(userCallbackRequest.getQuantity() < quantity){
+        if(bookInfo.getBookQuantitySelected() < bookInfo.getBookQuantityAvailable()){
             InlineKeyboardButton incrementQuantityButton = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.increment"));
-            incrementQuantityButton.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(getTypeString(),incrementText(),userCallbackRequest.getBookType(),userCallbackRequest.getBookSubType()
-                    , String.valueOf(userCallbackRequest.getIndex()),String.valueOf(userCallbackRequest.getQuantity()+1),String.valueOf(true)));
+            incrementQuantityButton.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(ButtonAction.INCREASE_QUANTITY,bookInfo.getBookType(),bookInfo.getBookSubType()
+                    , String.valueOf(bookInfo.getIndex()),String.valueOf(bookInfo.getBookQuantitySelected()),String.valueOf(true)));
             keyboardRow.add(incrementQuantityButton);
         }
         rowList.add(keyboardRow);
-        rowList.add(addToCartButton(userCallbackRequest));
+        rowList.add(addToCartButton(bookInfo));
         return rowList;
     }
 
-    public List<InlineKeyboardButton> addToCartButton(UserCallbackRequest userCallbackRequest){
+    public List<InlineKeyboardButton> addToCartButton(BookCatalogViewInfo bookInfo){
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         InlineKeyboardButton buttonAddToCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.addtocart"));
-        buttonAddToCart.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(getTypeString(),cartText(),userCallbackRequest.getBookType(),userCallbackRequest.getBookSubType()
-                , String.valueOf(userCallbackRequest.getIndex()), String.valueOf(userCallbackRequest.getQuantity()), String.valueOf(userCallbackRequest.isEditMessagePreferred())));
+        buttonAddToCart.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilterIndexQuantityEdit(ButtonAction.ADD_BOOK_TO_CART,bookInfo.getBookType(),bookInfo.getBookSubType()
+                , String.valueOf(bookInfo.getIndex()), String.valueOf(bookInfo.getBookQuantitySelected()), String.valueOf(false)));
         keyboardRow.add(buttonAddToCart);
         return keyboardRow;
     }
@@ -180,10 +160,10 @@ public class BookCatalogView extends View {
     public List<InlineKeyboardButton> mainMenuCartButtons(){
         List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.bookcatalog.mainmenu"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),mainmenuText(),false));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,false));
 
         InlineKeyboardButton buttonYourCart = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.generate"));
-        buttonYourCart.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),yourCartText(),false));
+        buttonYourCart.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_BASKET,false));
 
         keyboardRow.add(buttonMainMenu);
         keyboardRow.add(buttonYourCart);
@@ -198,10 +178,10 @@ public class BookCatalogView extends View {
         return keyboardRow;
     }
 
-    private EditMessageText noBooksSendMessage(UserCallbackRequest userCallbackRequest) {
+    private EditMessageText noBooksSendMessage(long chatId,int messageId) {
         EditMessageText editMessageText = new EditMessageText();
-        editMessageText.setChatId(userCallbackRequest.getChatId());
-        editMessageText.setMessageId(userCallbackRequest.getMessageId());
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
         editMessageText.setText(noBooks());
         editMessageText.setReplyMarkup(noBooksKeyboard());
         return editMessageText;
@@ -211,47 +191,16 @@ public class BookCatalogView extends View {
         return localeMessageService.getMessage("view.bookcatalog.nobooks");
     }
 
-    public String decrementText(){
-        return "decrement";
-    }
 
-    public String incrementText(){
-        return "increment";
-    }
 
-    public String forwardText(){
-        return "forward";
-    }
-
-    public String backText(){
-        return "back";
-    }
-
-    public String backToCategoryText() { return "backcategory";} //BACK BASE ON CATEGORY
-
-    public String cartText(){
-        return "addtocart";
-    }
-
-    public String yourCartText(){
-        return "gotocart";
-    }
-
-    public String mainmenuText(){
-        return "mainmenu";
-    }
-
-    @Override
     public String generateText() {
         return localeMessageService.getMessage("view.bookcatalog.generate");
     }
 
-    public String generateBookText(Book book,UserCallbackRequest userCallbackRequest) {
-        CurrencyConversionRate currencyConversionRate = currencyConversionService.getConversionRate(userCallbackRequest.getUserId());
-        BigDecimal convertedPrice = currencyConversionRate.getConvertedPrice(book.getPrice());
+    public String generateBookText(Book book,String convertedPrice) {
         return  localeMessageService.getMessage("view.bookcatalog.title") + ": " + book.getTitle() + "\n" +
                 localeMessageService.getMessage("view.bookcatalog.author") + ": " + book.getAuthor() + "\n" +
-                localeMessageService.getMessage("view.bookcatalog.price") + ": " + currencyConversionService.displayPrice(currencyConversionRate,convertedPrice) + "\n" +
+                localeMessageService.getMessage("view.bookcatalog.price") + ": " + convertedPrice + "\n" +
                 localeMessageService.getMessage("view.bookcatalog.publisher") + ": " + book.getPublisher() + "\n" +
                 localeMessageService.getMessage("view.bookcatalog.year") + ": " + book.getPublishingYear() +
                 book.getDescription() + "\n" +
@@ -259,45 +208,11 @@ public class BookCatalogView extends View {
     }
 
 
-    @Override
-    public View getNextView(UserCallbackRequest userCallbackRequest) {
-        String messageText = userCallbackRequest.getButtonClicked();
-        if(messageText.equals(forwardText())){
-            userCallbackRequest.setIndex(userCallbackRequest.getIndex()+1);
-            return viewService.getBookCatalogView();
-        }
-        else if(messageText.equals(backText())){
-            userCallbackRequest.setIndex(userCallbackRequest.getIndex()-1);
-            return viewService.getBookCatalogView();
-        }
-        else if(messageText.equals(cartText())){
-            Book book = bookRetrievalService.getBook(userCallbackRequest).getBook();
-            Cart cart = cartService.getCart(userCallbackRequest.getUserId());
-            try {
-                addRemoveBookToCartService.addBookToCart(book, cart, userCallbackRequest.getQuantity());
-                addedToCartMessage(userCallbackRequest);
-            } catch(LessBooksAvailableThanRequestedException e){
-                lessBooksAvailableThanRequested(userCallbackRequest);
-            } catch(BookAlreadyInCartException e){
-                bookAlreadyInCart(userCallbackRequest);
-            }
-            return viewService.getBookCatalogView();
-        }
-        else if(messageText.equals(incrementText()) || messageText.equals(decrementText()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(mainmenuText()))
-            return viewService.getMainMenuView();
-        else if(messageText.equals(yourCartText()))
-            return viewService.getBasketView();
-        else if(messageText.equals(backToCategoryText()))
-            return viewService.getCatalogMenuView();
-        else throw new UnexpectedInputException("Unexpected input");
-    }
 
-    private void addedToCartMessage(UserCallbackRequest userCallbackRequest) {
+    private void addedToCartMessage(String callbackId) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setText(localeMessageService.getMessage("view.bookcatalog.addedtocart"));
-        answerCallbackQuery.setCallbackQueryId(userCallbackRequest.getCallBackId());
+        answerCallbackQuery.setCallbackQueryId(callbackId);
         answerCallbackQuery.setShowAlert(true);
         try {
             bot.execute(answerCallbackQuery);
@@ -306,10 +221,10 @@ public class BookCatalogView extends View {
         }
     }
 
-    private void lessBooksAvailableThanRequested(UserCallbackRequest userCallbackRequest) {
+    private void lessBooksAvailableThanRequested(String callbackId) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setText(localeMessageService.getMessage("view.bookcatalog.lessbooksavailable"));
-        answerCallbackQuery.setCallbackQueryId(userCallbackRequest.getCallBackId());
+        answerCallbackQuery.setCallbackQueryId(callbackId);
         answerCallbackQuery.setShowAlert(true);
         try {
             bot.execute(answerCallbackQuery);
@@ -318,10 +233,10 @@ public class BookCatalogView extends View {
         }
     }
 
-    private void bookAlreadyInCart(UserCallbackRequest userCallbackRequest) {
+    private void bookAlreadyInCart(String callbackId) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setText(localeMessageService.getMessage("view.bookcatalog.bookalreadyincart"));
-        answerCallbackQuery.setCallbackQueryId(userCallbackRequest.getCallBackId());
+        answerCallbackQuery.setCallbackQueryId(callbackId);
         answerCallbackQuery.setShowAlert(true);
         try {
             bot.execute(answerCallbackQuery);
@@ -329,9 +244,11 @@ public class BookCatalogView extends View {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public String getTypeString() {
-        return "bookcatalog";
+        return TYPE_STRING;
     }
 }

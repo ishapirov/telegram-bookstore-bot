@@ -1,14 +1,12 @@
 package com.ishapirov.telegrambot.views.booksordered;
 
-import com.ishapirov.telegrambot.domain.bookordered.BookOrdered;
-import com.ishapirov.telegrambot.domain.shippingorder.ShippingOrder;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
-import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
+import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
-import com.ishapirov.telegrambot.services.orders.OrdersService;
-import com.ishapirov.telegrambot.services.view.ViewService;
-import com.ishapirov.telegrambot.views.View;
+import com.ishapirov.telegrambot.views.TelegramView;
+import com.ishapirov.telegrambot.views.booksordered.dto.BookOrderedInfo;
+import com.ishapirov.telegrambot.views.booksordered.dto.ShippingOrderInfo;
+import com.ishapirov.telegrambot.views.booksordered.dto.ShippingOrderViewInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -16,44 +14,37 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 @Service
-public class BooksOrderedView extends View {
-    @Autowired
-    ViewService viewService;
+public class BooksOrderedView implements TelegramView {
     @Autowired
     LocaleMessageService localeMessageService;
-    @Autowired
-    OrdersService ordersService;
-    @Autowired
-    CurrencyConversionService currencyConversionService;
+
+    public static final String TYPE_STRING = "booksordered";
 
     @Override
-    @Transactional
-    public BotApiMethod<?> generateMessage(UserCallbackRequest userCallbackRequest){
-        List<ShippingOrder> shippingOrders = ordersService.getUserShippingOrders(userCallbackRequest.getUserId());
-        if(shippingOrders.size() == 0){
+    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
+        ShippingOrderViewInfo shippingOrderViewInfo = (ShippingOrderViewInfo)object;
+        if(shippingOrderViewInfo.getShippingOrders().size() == 0){
             EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setChatId(userCallbackRequest.getChatId());
-            editMessageText.setMessageId(userCallbackRequest.getMessageId());
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
             editMessageText.setText(emptyText());
             editMessageText.setReplyMarkup(emptyKeyboard());
             return editMessageText;
         }
         else{
             EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setChatId(userCallbackRequest.getChatId());
-            editMessageText.setMessageId(userCallbackRequest.getMessageId());
-            editMessageText.setText(generateText() + orderInfo(shippingOrders));
-            editMessageText.setReplyMarkup(generateKeyboard(userCallbackRequest));
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
+            editMessageText.setText(generateText() + orderInfo(shippingOrderViewInfo.getShippingOrders()));
+            editMessageText.setReplyMarkup(generateKeyboard());
             return editMessageText;
         }
     }
-
 
     private String emptyText() {
         return localeMessageService.getMessage("view.orders.empty");
@@ -64,7 +55,7 @@ public class BooksOrderedView extends View {
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText(),false));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -74,13 +65,12 @@ public class BooksOrderedView extends View {
         return inlineKeyboardMarkup;
     }
 
-    @Override
-    protected InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
+    protected InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
-        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), mainMenuText(),false));
+        buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -90,41 +80,29 @@ public class BooksOrderedView extends View {
         return inlineKeyboardMarkup;
     }
 
-    @Override
     protected String generateText() {
         return localeMessageService.getMessage("view.orders.generate") + "\n";
     }
 
-    @Transactional
-    private String orderInfo(List<ShippingOrder> shippingOrders) {
-        String orderInfo = "";
-        for(ShippingOrder shippingOrder: shippingOrders){
+    private String orderInfo(List<ShippingOrderInfo> shippingOrders) {
+        StringBuilder orderInfo = new StringBuilder();
+        for(ShippingOrderInfo shippingOrder: shippingOrders){
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(shippingOrder.getDateOrdered());
-            orderInfo += localeMessageService.getMessage("shippingorder.date") + ": " + calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR) + "\n";
-            orderInfo += localeMessageService.getMessage("shippingorder.books") + ":\n";
-            for(BookOrdered bookOrdered: shippingOrder.getBooksOrdered()){
-                orderInfo+= bookOrdered.getBook().getTitle() + ", " + localeMessageService.getMessage("shippingorder.quantity") +": " + bookOrdered.getQuantity() +"\n";
+            orderInfo.append(localeMessageService.getMessage("shippingorder.date")).append(": ").append(calendar.get(Calendar.DAY_OF_MONTH)).append("-").append(calendar.get(Calendar.MONTH)).append("-").append(calendar.get(Calendar.YEAR)).append("\n");
+            orderInfo.append(localeMessageService.getMessage("shippingorder.books")).append(":\n");
+            for(BookOrderedInfo bookOrdered: shippingOrder.getBooksOrdered()){
+                orderInfo.append(bookOrdered.getTitle()).append(", ").append(localeMessageService.getMessage("shippingorder.quantity")).append(": ").append(bookOrdered.getQuantity()).append("\n");
             }
-            orderInfo+=localeMessageService.getMessage("shippingorder.totalcost") + ": " + currencyConversionService.displayPrice(shippingOrder.getCurrency(), shippingOrder.getTotalCost()) +"\n\n";
+            orderInfo.append(localeMessageService.getMessage("shippingorder.totalcost")).append(": ").append(shippingOrder.getTotalPrice()).append("\n\n");
         }
-        return orderInfo;
+        return orderInfo.toString();
     }
 
     @Override
     public String getTypeString() {
-        return "booksordered";
+        return TYPE_STRING;
     }
 
-    public String mainMenuText() {
-        return "mainmenu";
-    }
 
-    @Override
-    public View getNextView(UserCallbackRequest userCallbackRequest) {
-        String messageText = userCallbackRequest.getButtonClicked();
-        if(messageText.equals(mainMenuText()))
-            return viewService.getMainMenuView();
-        else throw new UnexpectedInputException("Unexpected input");
-    }
 }

@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.controller;
+package com.ishapirov.telegrambot.webhookcontroller;
 
 import com.ishapirov.telegrambot.bot.Bot;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,6 +7,7 @@ import com.ishapirov.telegrambot.repositories.BookInventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -14,8 +15,9 @@ public class BookInventoryService {
     @Autowired
     private BookInventoryRepository bookInventoryRepository;
     @Autowired
-    private BookRetrievalService bookRetrievalService;
+    private BookCatalogRetrievalService bookCatalogRetrievalService;
 
+    @Transactional
     public int getQuantity(String bookISBN){
         Optional<BookInventory> bookInventory = bookInventoryRepository.findByBookISBN(bookISBN);
         if(bookInventory.isEmpty())
@@ -44,13 +46,13 @@ public class BookInventoryService {
     }
 
     public void saveParentingBook(ParentingBook parentingBook, int quantity){
-        bookRetrievalService.saveParentingBook(parentingBook);
+        bookCatalogRetrievalService.saveParentingBook(parentingBook);
         BookInventory bookInventory = new BookInventory(parentingBook.getBookISBN(),parentingBook,quantity);
         bookInventoryRepository.save(bookInventory);
     }
 
     public void saveKidBook(KidBook kidBook, int quantity){
-        bookRetrievalService.saveKidBook(kidBook);
+        bookCatalogRetrievalService.saveKidBook(kidBook);
         BookInventory bookInventory = new BookInventory(kidBook.getBookISBN(),kidBook,quantity);
         bookInventoryRepository.save(bookInventory);
     }

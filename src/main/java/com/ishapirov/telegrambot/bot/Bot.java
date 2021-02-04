@@ -1,6 +1,6 @@
 package com.ishapirov.telegrambot.bot;
 
-import com.ishapirov.telegrambot.services.inputprocessing.UserInputProcessorService;
+import com.ishapirov.telegrambot.services.inputprocessing.TelegramMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +26,11 @@ public class Bot extends TelegramWebhookBot {
     private String path;
 
     @Autowired
-    private UserInputProcessorService userInputProcessorService;
+    private TelegramMessageHandler telegramMessageHandler;
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        return userInputProcessorService.handleUpdate(update);
+        return telegramMessageHandler.handleUpdate(update);
     }
 
     @Override

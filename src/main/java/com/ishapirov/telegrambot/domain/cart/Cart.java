@@ -2,11 +2,13 @@ package com.ishapirov.telegrambot.domain.cart;
 
 import com.ishapirov.telegrambot.domain.bookaddedtocart.BookAddedToCart;
 import com.ishapirov.telegrambot.domain.user.UserProfile;
+import com.ishapirov.telegrambot.services.currency.CurrencyConversionRate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class Cart {
     @OneToOne
     private UserProfile userProfile;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER)
     private List<BookAddedToCart> booksInCart = new ArrayList<>();
 
     public boolean containsBook(String bookISBN){
@@ -39,5 +41,12 @@ public class Cart {
             return null;
         else
             return booksInCart.get(index);
+    }
+
+    public BigDecimal getTotalCartCost(CurrencyConversionRate currencyConversionRate) {
+        BigDecimal totalCost = new BigDecimal(0);
+        for (BookAddedToCart bookAddedToCart : this.getBooksInCart())
+            totalCost = totalCost.add(currencyConversionRate.getConvertedPrice(bookAddedToCart.getBook().getPrice().multiply(new BigDecimal(bookAddedToCart.getQuantity()))));
+        return totalCost;
     }
 }

@@ -1,14 +1,16 @@
 package com.ishapirov.telegrambot.views.bookcatalog;
 
-import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
+import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.domain.book.ParentingBook;
 import com.ishapirov.telegrambot.domain.book.ParentingBookCategory;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
+import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
-import com.ishapirov.telegrambot.services.view.ViewService;
-import com.ishapirov.telegrambot.views.View;
+import com.ishapirov.telegrambot.views.TelegramView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -16,35 +18,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ParentingBooksSelectCategoryView extends View {
-    @Autowired
-    ViewService viewService;
+public class ParentingBooksSelectCategoryView implements TelegramView {
     @Autowired
     LocaleMessageService localeMessageService;
 
+    public static final String TYPE_STRING = "parentingselect";
+
+
     @Override
-    protected InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
+    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
+        if(editMessagePreferred){
+            EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
+            editMessageText.setText(generateText());
+            editMessageText.setReplyMarkup(generateKeyboard());
+            return editMessageText;
+        }
+        else{
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setText(generateText());
+            sendMessage.setReplyMarkup(generateKeyboard());
+            sendMessage.setChatId(chatId);
+            return sendMessage;
+        }
+    }
+
+    protected InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonUpbringing = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.upbringing"));
-        buttonUpbringing.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), upbringing(), ParentingBook.typeOfBook(), ParentingBookCategory.UPBRINGING.name()));
+        buttonUpbringing.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(ButtonAction.GO_TO_BOOK_CATALOG, ParentingBook.typeOfBook(), ParentingBookCategory.UPBRINGING.name()));
         InlineKeyboardButton buttonPsychology = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.psychology"));
-        buttonPsychology.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), psychology(),ParentingBook.typeOfBook(),ParentingBookCategory.PSYCHOLOGY.name()));
+        buttonPsychology.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(ButtonAction.GO_TO_BOOK_CATALOG,ParentingBook.typeOfBook(),ParentingBookCategory.PSYCHOLOGY.name()));
         keyboardButtonsRow1.add(buttonUpbringing);
         keyboardButtonsRow1.add(buttonPsychology);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         InlineKeyboardButton buttonInspiration= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.inspiration"));
-        buttonInspiration.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), inspiration(),ParentingBook.typeOfBook(),ParentingBookCategory.INSPIRATION.name()));
+        buttonInspiration.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(ButtonAction.GO_TO_BOOK_CATALOG,ParentingBook.typeOfBook(),ParentingBookCategory.INSPIRATION.name()));
         InlineKeyboardButton buttonAll= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.parentingselect.all"));
-        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(getTypeString(), allBooks(),ParentingBook.typeOfBook(),"all"));
+        buttonAll.setCallbackData(UserCallbackRequest.generateQueryMessageWithFilter(ButtonAction.GO_TO_BOOK_CATALOG,ParentingBook.typeOfBook(),"all"));
         keyboardButtonsRow2.add(buttonInspiration);
         keyboardButtonsRow2.add(buttonAll);
 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         InlineKeyboardButton buttonBack= new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(), backText(),true));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_CATALOG_MENU,true));
         keyboardButtonsRow3.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -56,43 +77,13 @@ public class ParentingBooksSelectCategoryView extends View {
         return inlineKeyboardMarkup;
     }
 
-    public String upbringing(){
-        return "upbringing";
-    }
 
-    public String psychology(){
-        return "psychology";
-    }
-
-    public String inspiration(){
-        return "inspiration";
-    }
-
-    public String allBooks(){
-        return "all";
-    }
-
-    public String backText(){
-        return "back";
-    }
-
-    @Override
     protected String generateText() {
         return localeMessageService.getMessage("view.parentingselect.generate");
     }
 
     @Override
-    public View getNextView(UserCallbackRequest userCallbackRequest) {
-        String messageText = userCallbackRequest.getButtonClicked();
-        if(messageText.equals(upbringing()) || messageText.equals(psychology()) || messageText.equals(inspiration()) || messageText.equals(allBooks()))
-            return viewService.getBookCatalogView();
-        else if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
-            return viewService.getMainMenuView();
-        else throw new UnexpectedInputException("Unexpected input");
-    }
-
-    @Override
     public String getTypeString() {
-        return "parentingselect";
+        return TYPE_STRING;
     }
 }

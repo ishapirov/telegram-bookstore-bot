@@ -3,7 +3,6 @@ package com.ishapirov.telegrambot.services.precheckout;
 import com.ishapirov.telegrambot.domain.bookaddedtocart.BookAddedToCart;
 import com.ishapirov.telegrambot.domain.cart.Cart;
 import com.ishapirov.telegrambot.services.bookservices.BookInventoryService;
-import com.ishapirov.telegrambot.services.cartservices.AddRemoveBookToCartService;
 import com.ishapirov.telegrambot.services.cartservices.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,6 @@ public class PreCheckoutService {
     BookInventoryService bookInventoryService;
     @Autowired
     CartService cartService;
-    @Autowired
-    AddRemoveBookToCartService addRemoveBookToCartService;
 
     @Transactional
     public BotApiMethod<?> handlePreCheckoutQuery(PreCheckoutQuery preCheckoutQuery) {
@@ -34,10 +31,10 @@ public class PreCheckoutService {
             answerPreCheckoutQuery.setOk(true);
         } else {
             answerPreCheckoutQuery.setOk(false);
-            String error = "The following books are no longer in stock and have been removed from your cart: ";
+            StringBuilder error = new StringBuilder("The following books are no longer in stock and have been removed from your cart: ");
             for(String title: unavailableBookTitles)
-                error+=title;
-            answerPreCheckoutQuery.setErrorMessage(error);
+                error.append(title);
+            answerPreCheckoutQuery.setErrorMessage(error.toString());
         }
         return answerPreCheckoutQuery;
     }
@@ -49,7 +46,7 @@ public class PreCheckoutService {
                 String bookID = bookAddedToCart.getBook().getBookISBN();
                 if(bookAddedToCart.getQuantity() > bookInventoryService.getQuantity(bookID)){
                     namesOfUnavailableBooks.add(bookAddedToCart.getBook().getTitle());
-                    addRemoveBookToCartService.removeBookFromCart(bookAddedToCart);
+                    cartService.removeBookFromCart(bookAddedToCart);
                 }
             }
             return namesOfUnavailableBooks;

@@ -1,12 +1,15 @@
 package com.ishapirov.telegrambot.views.manager;
 
+import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
-import com.ishapirov.telegrambot.exceptionhandling.exceptions.UnexpectedInputException;
 import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
 import com.ishapirov.telegrambot.services.view.ViewService;
-import com.ishapirov.telegrambot.views.View;
+import com.ishapirov.telegrambot.views.TelegramView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -14,19 +17,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ManagerContactInformationView extends View {
+public class ManagerContactInformationView implements TelegramView {
     @Autowired
     ViewService viewService;
     @Autowired
     LocaleMessageService localeMessageService;
 
+    public static final String TYPE_STRING = "managercontactinformation";
+
     @Override
-    public InlineKeyboardMarkup generateKeyboard(UserCallbackRequest userCallbackRequest) {
+    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
+        if(editMessagePreferred){
+            EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
+            editMessageText.setText(generateText());
+            editMessageText.setReplyMarkup(generateKeyboard());
+            return editMessageText;
+        }
+        else{
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setText(generateText());
+            sendMessage.setReplyMarkup(generateKeyboard());
+            sendMessage.setChatId(chatId);
+            return sendMessage;
+        }
+    }
+
+    public InlineKeyboardMarkup generateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
-        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(getTypeString(),backText(),true));
+        buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,true));
         keyboardButtonsRow1.add(buttonBack);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -35,7 +58,6 @@ public class ManagerContactInformationView extends View {
         return inlineKeyboardMarkup;
     }
 
-    @Override
     public String generateText() {
         return localeMessageService.getMessage("view.manager.generate");
     }
@@ -44,17 +66,11 @@ public class ManagerContactInformationView extends View {
         return "back";
     }
 
-    @Override
-    public View getNextView(UserCallbackRequest userCallbackRequest) {
-        String messageText = userCallbackRequest.getButtonClicked();
-        if(messageText.equals(viewService.getMainMenuView().getTypeString()) || messageText.equals(backText()))
-            return viewService.getMainMenuView();
-        else
-            throw new UnexpectedInputException("Unexpected input");
-    }
+
+
 
     @Override
     public String getTypeString() {
-        return "managercontactinformation";
+        return TYPE_STRING;
     }
 }
