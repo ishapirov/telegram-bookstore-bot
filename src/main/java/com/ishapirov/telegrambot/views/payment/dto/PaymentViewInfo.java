@@ -9,4 +9,5 @@ public class PaymentViewInfo {
     private boolean cartEmpty;
     private BigDecimal totalCost;
     private String currency;
+    private String localeString;
 }

@@ -28,21 +28,22 @@ public class UserProfileService {
     }
 
     public Currency getCurrencyForUser(Integer userId){
-        UserProfile userProfile = getUserProfile(userId);
-        return userProfile.getCurrency();
+        return getUserProfile(userId).getCurrency();
     }
 
     private UserProfile createNewProfile(Integer userId) {
-        UserProfile userProfile = new UserProfile(userId, Currency.getInstance("RUB"));
+        UserProfile userProfile = new UserProfile(userId, Currency.getInstance("USD"), "en-US");
         userProfileRepository.save(userProfile);
         return userProfile;
     }
 
-    public boolean doesProfileExist(Integer userId){
-        return userProfileRepository.existsById(userId);
+    public String getLocaleForUser(Integer userId){
+        return getUserProfile(userId).getLocaleString();
     }
 
-    public void saveProfile(UserProfile userProfile){
+    public void setLanguageForUser(Integer userId, String locale){
+        UserProfile userProfile = getUserProfile(userId);
+        userProfile.setLocaleString(locale);
         userProfileRepository.save(userProfile);
     }
 }

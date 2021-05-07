@@ -13,6 +13,7 @@ public class ViewRemoveBooksViewInfo {
     private int quantitySelected;
     private boolean noBooksInCart;
     private boolean removedFromCart;
+    private String localeString;
 
     public boolean hasNext(){
         return this.hasNext;

@@ -7,4 +7,5 @@ import java.util.List;
 @Data
 public class ShippingOrderViewInfo {
     List<ShippingOrderInfo> shippingOrders;
+    String locale;
 }

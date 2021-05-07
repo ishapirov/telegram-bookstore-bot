@@ -4,6 +4,7 @@ import com.ishapirov.telegrambot.domain.cart.Cart;
 import com.ishapirov.telegrambot.services.cartservices.CartService;
 import com.ishapirov.telegrambot.services.localemessage.LocaleMessageService;
 import com.ishapirov.telegrambot.services.orders.OrdersService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
 import com.ishapirov.telegrambot.services.view.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ public class SuccessfulPaymentService {
     ViewService viewService;
     @Autowired
     OrdersService ordersService;
+    @Autowired
+    UserProfileService userProfileService;
 
     @Transactional
     public BotApiMethod<?> handleSuccessfulPayment(Message message) {
@@ -36,8 +39,9 @@ public class SuccessfulPaymentService {
     private SendMessage orderProcessedMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
-        sendMessage.setText(localeMessageService.getMessage("successfulpayment.orderprocessed"));
-        sendMessage.setReplyMarkup(viewService.getBasketView().generateKeyboard());
+        Integer userId = message.getFrom().getId();
+        sendMessage.setText(localeMessageService.getMessage("successfulpayment.orderprocessed",userProfileService.getLocaleForUser(userId)));
+        sendMessage.setReplyMarkup(viewService.getBasketView().generateKeyboard(userProfileService.getLocaleForUser(userId)));
         return sendMessage;
     }
 }

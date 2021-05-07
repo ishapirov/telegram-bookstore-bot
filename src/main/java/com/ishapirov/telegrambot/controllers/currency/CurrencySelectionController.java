@@ -16,8 +16,6 @@ public class CurrencySelectionController {
     public MainMenuViewDTO updateCurrency(UpdatedCurrency updatedCurrency) {
         Currency newCurrency = Currency.getInstance(updatedCurrency.getCurrencyCodeSelected());
         userProfileService.setCurrencyForUser(updatedCurrency.getUserId(), newCurrency);
-        return new MainMenuViewDTO(updatedCurrency.getCurrencyCodeSelected());
+        return new MainMenuViewDTO(updatedCurrency.getCurrencyCodeSelected(), userProfileService.getLocaleForUser(updatedCurrency.getUserId()));
     }
-
-
 }

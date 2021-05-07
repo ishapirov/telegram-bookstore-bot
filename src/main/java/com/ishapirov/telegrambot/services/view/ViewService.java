@@ -11,6 +11,7 @@ import com.ishapirov.telegrambot.views.bookcatalog.KidBooksSelectAgeView;
 import com.ishapirov.telegrambot.views.bookcatalog.ParentingBooksSelectCategoryView;
 import com.ishapirov.telegrambot.views.booksordered.BooksOrderedView;
 import com.ishapirov.telegrambot.views.currency.CurrencySelectionView;
+import com.ishapirov.telegrambot.views.language.LanguageSelectionView;
 import com.ishapirov.telegrambot.views.mainmenu.MainMenuView;
 import com.ishapirov.telegrambot.views.manager.ManagerContactInformationView;
 import com.ishapirov.telegrambot.views.payment.PaymentView;
@@ -46,6 +47,8 @@ public class ViewService {
     public ParentingBooksSelectCategoryView getParentingBooksSelectCategoryView() { return (ParentingBooksSelectCategoryView) telegramViewMap.get(ParentingBooksSelectCategoryView.TYPE_STRING);}
 
     public PaymentView getPaymentView() { return (PaymentView) telegramViewMap.get(PaymentView.TYPE_STRING);};
+
+    public LanguageSelectionView getLanguageSelectView() { return (LanguageSelectionView) telegramViewMap.get(LanguageSelectionView.TYPE_STRING);}
 
     public ViewRemoveBooksInCartView getViewRemoveBooksInBasketView(){ return (ViewRemoveBooksInCartView) telegramViewMap.get(ViewRemoveBooksInCartView.TYPE_STRING);}
 
@@ -95,6 +98,10 @@ public class ViewService {
             return getKidBooksSelectAgeView();
         else if(action.equals(ButtonAction.GO_TO_PARENTING_CATEGORIES))
             return getParentingBooksSelectCategoryView();
+        else if(action.equals(ButtonAction.GO_TO_LANGUAGE_SELECT))
+            return getLanguageSelectView();
+        else if(action.equals(ButtonAction.SELECT_ENG) || action.equals(ButtonAction.SELECT_RUS))
+            return getMainMenuView();
         else if(action.equals(ButtonAction.SELECT_USD) || action.equals(ButtonAction.SELECT_RUB) || action.equals(ButtonAction.SELECT_UZS))
             return getMainMenuView();
         throw new UnexpectedInputException("Unknown action");

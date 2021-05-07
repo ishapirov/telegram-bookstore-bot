@@ -2,6 +2,7 @@ package com.ishapirov.telegrambot.controllers.gotoview;
 
 import com.ishapirov.telegrambot.controllers.gotoview.dto.MainMenuControllerInfo;
 import com.ishapirov.telegrambot.controllers.gotoview.dto.ShippingOrderControllerInfo;
+import com.ishapirov.telegrambot.controllers.gotoview.dto.UserIDControllerInfo;
 import com.ishapirov.telegrambot.domain.bookordered.BookOrdered;
 import com.ishapirov.telegrambot.domain.shippingorder.ShippingOrder;
 import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
@@ -10,6 +11,7 @@ import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
 import com.ishapirov.telegrambot.views.booksordered.dto.BookOrderedInfo;
 import com.ishapirov.telegrambot.views.booksordered.dto.ShippingOrderInfo;
 import com.ishapirov.telegrambot.views.booksordered.dto.ShippingOrderViewInfo;
+import com.ishapirov.telegrambot.views.dto.LocaleDTO;
 import com.ishapirov.telegrambot.views.mainmenu.dto.MainMenuViewDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,7 @@ public class GoToController {
     CurrencyConversionService currencyConversionService;
     
     public MainMenuViewDTO mainMenuData(MainMenuControllerInfo mainMenuControllerInfo) {
-        return new MainMenuViewDTO(userProfileService.getCurrencyForUser(mainMenuControllerInfo.getUserId()).getCurrencyCode());
+        return new MainMenuViewDTO(userProfileService.getCurrencyForUser(mainMenuControllerInfo.getUserId()).getCurrencyCode(), userProfileService.getLocaleForUser(mainMenuControllerInfo.getUserId()));
     }
 
     @Transactional
@@ -51,34 +53,36 @@ public class GoToController {
             shippingOrderInfoList.add(shippingOrderInfo);
         }
         shippingOrderViewInfo.setShippingOrders(shippingOrderInfoList);
+        shippingOrderViewInfo.setLocale(userProfileService.getLocaleForUser(shippingOrderControllerInfo.getUserId()));
         return shippingOrderViewInfo;
     }
 
-    public Object basketData(){
-        return null;
+    public Object basketData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
 
-    public Object kidsCategoriesData(){
-        return null;
+    public Object kidsCategoriesData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
 
-    public Object parentingCategoriesData(){
-        return null;
+    public Object parentingCategoriesData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
 
-    public Object catalogMenuData(){
-        return null;
+    public Object catalogMenuData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
     
-    public Object currencySelectData(){
-        return null;
+    public Object currencySelectData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
 
-    public Object managerData(){
-        return null;
+    public Object languageSelectData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
     }
 
-
-
+    public Object managerData(UserIDControllerInfo userIDControllerInfo){
+        return new LocaleDTO(userProfileService.getLocaleForUser(userIDControllerInfo.getUserId()));
+    }
 
 }

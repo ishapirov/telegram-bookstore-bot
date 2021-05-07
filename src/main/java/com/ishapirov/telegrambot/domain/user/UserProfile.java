@@ -18,11 +18,13 @@ public class UserProfile {
     @Id
     private int userId;
     private Currency currency;
+    private String localeString;
 
 
-    public UserProfile(Integer userId, Currency currency) {
+    public UserProfile(Integer userId, Currency currency,String localeString) {
         this.userId = userId;
         this.currency = currency;
+        this.localeString = localeString;
     }
 
 }

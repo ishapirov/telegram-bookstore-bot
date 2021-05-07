@@ -9,16 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GoToManagerInfoCommand implements Command {
+public class GoToLanguageSelectCommand implements Command {
     @Autowired
     GoToController goToController;
 
-    private final ButtonAction actionWhichTriggersCommand = ButtonAction.GO_TO_MANAGER_INFO;
+    private final ButtonAction actionWhichTriggersCommand = ButtonAction.GO_TO_LANGUAGE_SELECT;
 
     @Override
     public Object execute(UserCallbackRequest userCallbackRequest) {
         UserIDControllerInfo userIDControllerInfo = new UserIDControllerInfo(userCallbackRequest.getUserId());
-        return goToController.managerData(userIDControllerInfo);
+        return goToController.languageSelectData(userIDControllerInfo);
     }
 
     @Override

@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class MainMenuViewDTO {
-    public String currency;
+    private String currency;
+    private String localeString;
 }

@@ -6,6 +6,7 @@ public enum ButtonAction {
     GO_TO_MANAGER_INFO,
     GO_TO_BASKET,
     GO_TO_CURRENCY_SELECT,
+    GO_TO_LANGUAGE_SELECT,
     GO_TO_ORDERS,
     GO_TO_VIEW_REMOVE,
     GO_TO_BOOK_CATALOG,
@@ -22,5 +23,7 @@ public enum ButtonAction {
     GO_TO_PARENTING_CATEGORIES,
     SELECT_USD,
     SELECT_RUB,
-    SELECT_UZS
+    SELECT_UZS,
+    SELECT_ENG,
+    SELECT_RUS
 }

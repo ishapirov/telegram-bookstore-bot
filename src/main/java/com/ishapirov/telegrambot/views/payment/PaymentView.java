@@ -35,7 +35,7 @@ public class PaymentView implements TelegramView {
     public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
         PaymentViewInfo paymentViewInfo = (PaymentViewInfo) object;
         if(paymentViewInfo.isCartEmpty())
-            return emptyCartMessage(chatId);
+            return emptyCartMessage(chatId,paymentViewInfo.getLocaleString());
 
         List<LabeledPrice> prices = new ArrayList<>();
         LabeledPrice labeledPrice = new LabeledPrice("label",paymentViewInfo.getTotalCost().multiply(new BigDecimal(100)).intValue());
@@ -57,23 +57,23 @@ public class PaymentView implements TelegramView {
         return sendInvoice;
     }
 
-    private BotApiMethod<?> emptyCartMessage(long chatId) {
+    private BotApiMethod<?> emptyCartMessage(long chatId,String locale) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText(emptyText());
-        sendMessage.setReplyMarkup(emptyKeyboard());
+        sendMessage.setText(emptyText(locale));
+        sendMessage.setReplyMarkup(emptyKeyboard(locale));
         return sendMessage;
     }
 
-    private ReplyKeyboard emptyKeyboard() {
+    private ReplyKeyboard emptyKeyboard(String locale) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
+        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate",locale));
         buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,true));
         keyboardButtonsRow1.add(buttonMainMenu);
 
-        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back"));
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back",locale));
         buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_BASKET,true));
         keyboardButtonsRow1.add(buttonBack);
 
@@ -84,13 +84,13 @@ public class PaymentView implements TelegramView {
         return inlineKeyboardMarkup;
     }
 
-    private String emptyText() {
-        return localeMessageService.getMessage("view.viewandedit.nobooksincart");
+    private String emptyText(String locale) {
+        return localeMessageService.getMessage("view.viewandedit.nobooksincart",locale);
     }
 
 
-    protected String generateText() {
-        return localeMessageService.getMessage("view.payment.generate");
+    protected String generateText(String locale) {
+        return localeMessageService.getMessage("view.payment.generate",locale);
     }
 
     @Override

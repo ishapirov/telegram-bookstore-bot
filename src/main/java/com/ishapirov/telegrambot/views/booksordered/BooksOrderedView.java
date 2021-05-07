@@ -28,33 +28,34 @@ public class BooksOrderedView implements TelegramView {
     @Override
     public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
         ShippingOrderViewInfo shippingOrderViewInfo = (ShippingOrderViewInfo)object;
+        String locale = shippingOrderViewInfo.getLocale();
         if(shippingOrderViewInfo.getShippingOrders().size() == 0){
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
-            editMessageText.setText(emptyText());
-            editMessageText.setReplyMarkup(emptyKeyboard());
+            editMessageText.setText(emptyText(locale));
+            editMessageText.setReplyMarkup(emptyKeyboard(locale));
             return editMessageText;
         }
         else{
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
-            editMessageText.setText(generateText() + orderInfo(shippingOrderViewInfo.getShippingOrders()));
-            editMessageText.setReplyMarkup(generateKeyboard());
+            editMessageText.setText(generateText(locale) + orderInfo(shippingOrderViewInfo.getShippingOrders(),locale));
+            editMessageText.setReplyMarkup(generateKeyboard(locale));
             return editMessageText;
         }
     }
 
-    private String emptyText() {
-        return localeMessageService.getMessage("view.orders.empty");
+    private String emptyText(String locale) {
+        return localeMessageService.getMessage("view.orders.empty",locale);
     }
 
-    private InlineKeyboardMarkup emptyKeyboard() {
+    private InlineKeyboardMarkup emptyKeyboard(String locale) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
+        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate",locale));
         buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
@@ -65,11 +66,11 @@ public class BooksOrderedView implements TelegramView {
         return inlineKeyboardMarkup;
     }
 
-    protected InlineKeyboardMarkup generateKeyboard() {
+    protected InlineKeyboardMarkup generateKeyboard(String locale) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate"));
+        InlineKeyboardButton buttonMainMenu = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.generate",locale));
         buttonMainMenu.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,false));
         keyboardButtonsRow1.add(buttonMainMenu);
 
@@ -80,21 +81,21 @@ public class BooksOrderedView implements TelegramView {
         return inlineKeyboardMarkup;
     }
 
-    protected String generateText() {
-        return localeMessageService.getMessage("view.orders.generate") + "\n";
+    protected String generateText(String locale) {
+        return localeMessageService.getMessage("view.orders.generate",locale) + "\n";
     }
 
-    private String orderInfo(List<ShippingOrderInfo> shippingOrders) {
+    private String orderInfo(List<ShippingOrderInfo> shippingOrders,String locale) {
         StringBuilder orderInfo = new StringBuilder();
         for(ShippingOrderInfo shippingOrder: shippingOrders){
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(shippingOrder.getDateOrdered());
-            orderInfo.append(localeMessageService.getMessage("shippingorder.date")).append(": ").append(calendar.get(Calendar.DAY_OF_MONTH)).append("-").append(calendar.get(Calendar.MONTH)).append("-").append(calendar.get(Calendar.YEAR)).append("\n");
-            orderInfo.append(localeMessageService.getMessage("shippingorder.books")).append(":\n");
+            orderInfo.append(localeMessageService.getMessage("shippingorder.date",locale)).append(": ").append(calendar.get(Calendar.DAY_OF_MONTH)).append("-").append(calendar.get(Calendar.MONTH)).append("-").append(calendar.get(Calendar.YEAR)).append("\n");
+            orderInfo.append(localeMessageService.getMessage("shippingorder.books",locale)).append(":\n");
             for(BookOrderedInfo bookOrdered: shippingOrder.getBooksOrdered()){
-                orderInfo.append(bookOrdered.getTitle()).append(", ").append(localeMessageService.getMessage("shippingorder.quantity")).append(": ").append(bookOrdered.getQuantity()).append("\n");
+                orderInfo.append(bookOrdered.getTitle()).append(", ").append(localeMessageService.getMessage("shippingorder.quantity",locale)).append(": ").append(bookOrdered.getQuantity()).append("\n");
             }
-            orderInfo.append(localeMessageService.getMessage("shippingorder.totalcost")).append(": ").append(shippingOrder.getTotalPrice()).append("\n\n");
+            orderInfo.append(localeMessageService.getMessage("shippingorder.totalcost",locale)).append(": ").append(shippingOrder.getTotalPrice()).append("\n\n");
         }
         return orderInfo.toString();
     }

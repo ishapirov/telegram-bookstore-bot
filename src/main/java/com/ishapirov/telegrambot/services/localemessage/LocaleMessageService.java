@@ -25,6 +25,10 @@ public class LocaleMessageService {
         return messageSource.getMessage(message, null, locale);
     }
 
+    public String getMessage(String message,String localeString) {
+        return messageSource.getMessage(message,null,Locale.forLanguageTag(localeString));
+    }
+
     public String getMessage(String message, Object... args) {
         return messageSource.getMessage(message, args, locale);
     }

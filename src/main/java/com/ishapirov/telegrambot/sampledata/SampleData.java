@@ -21,7 +21,7 @@ public class SampleData {
     BookInventoryService bookInventoryService;
 
 
-//    @EventListener
+//     @EventListener
      public void appReady(ApplicationReadyEvent event) throws IOException, ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 

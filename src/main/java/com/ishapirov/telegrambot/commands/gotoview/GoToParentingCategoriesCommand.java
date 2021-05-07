@@ -3,6 +3,7 @@ package com.ishapirov.telegrambot.commands.gotoview;
 import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.commands.Command;
 import com.ishapirov.telegrambot.controllers.gotoview.GoToController;
+import com.ishapirov.telegrambot.controllers.gotoview.dto.UserIDControllerInfo;
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,8 @@ public class GoToParentingCategoriesCommand implements Command {
 
     @Override
     public Object execute(UserCallbackRequest userCallbackRequest) {
-        return goToController.parentingCategoriesData();
+        UserIDControllerInfo userIDControllerInfo = new UserIDControllerInfo(userCallbackRequest.getUserId());
+        return goToController.parentingCategoriesData(userIDControllerInfo);
     }
 
     @Override

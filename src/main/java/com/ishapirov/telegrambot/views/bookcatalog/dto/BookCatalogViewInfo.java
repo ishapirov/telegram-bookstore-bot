@@ -22,6 +22,8 @@ public class BookCatalogViewInfo {
     private boolean lessBooksAvailable;
     private boolean noBooksInCatalog;
 
+    private String localeString;
+
     public boolean hasNext() {
         return hasNext;
     }

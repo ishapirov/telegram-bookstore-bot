@@ -4,6 +4,7 @@ import com.ishapirov.telegrambot.domain.cart.Cart;
 import com.ishapirov.telegrambot.services.cartservices.CartService;
 import com.ishapirov.telegrambot.services.currency.CurrencyConversionRate;
 import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
 import com.ishapirov.telegrambot.views.payment.dto.PaymentViewInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,8 @@ public class PaymentController {
     CurrencyConversionService currencyConversionService;
     @Autowired
     CartService cartService;
+    @Autowired
+    UserProfileService userProfileService;
 
     public static final String TYPE_STRING = "payment";
 
@@ -29,6 +32,7 @@ public class PaymentController {
         CurrencyConversionRate currencyConversionRate = currencyConversionService.getConversionRate(paymentControllerInfo.getUserId());
         paymentViewInfo.setTotalCost(cart.getTotalCartCost(currencyConversionRate));
         paymentViewInfo.setCurrency(currencyConversionRate.getCurrency().getCurrencyCode());
+        paymentViewInfo.setLocaleString(userProfileService.getLocaleForUser(paymentControllerInfo.getUserId()));
         return paymentViewInfo;
     }
 

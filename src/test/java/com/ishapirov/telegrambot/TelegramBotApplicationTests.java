@@ -6,7 +6,6 @@ import com.ishapirov.telegrambot.services.inputprocessing.TelegramMessageHandler
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
 import com.ishapirov.telegrambot.services.view.ViewService;
 import com.ishapirov.telegrambot.testdomain.*;
-import com.ishapirov.telegrambot.views.bookcatalog.BookCatalogView;
 import com.ishapirov.telegrambot.webhookcontroller.WebHookController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,6 @@ class TelegramBotApplicationTests {
 		CustomMessage user1Message = new CustomMessage(chat1Id,messageId,user1,null);
 		CustomMessage user2Message = new CustomMessage(chat2Id,messageId,user2,null);
 
-		BookCatalogView bookCatalogView = viewService.getBookCatalogView();
 		String callbackData = UserCallbackRequest.generateQueryMessage(ButtonAction.ADD_BOOK_TO_CART,false);
 
 		CustomCallback user1OrderCallback = new CustomCallback(callbackData,user1,user1Message,"123");

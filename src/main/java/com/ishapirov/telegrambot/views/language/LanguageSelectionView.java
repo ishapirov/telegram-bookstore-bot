@@ -1,4 +1,4 @@
-package com.ishapirov.telegrambot.views.cart;
+package com.ishapirov.telegrambot.views.language;
 
 import com.ishapirov.telegrambot.buttonactions.ButtonAction;
 import com.ishapirov.telegrambot.services.inputprocessing.UserCallbackRequest;
@@ -16,16 +16,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
-public class CartView implements TelegramView {
+public class LanguageSelectionView implements TelegramView {
     @Autowired
     LocaleMessageService localeMessageService;
 
-    public static final String TYPE_STRING = "basket";
+    public static final String TYPE_STRING ="languageselection";
 
     @Override
-    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId,String callbackId, boolean editMessagePreferred) {
+    public BotApiMethod<?> generateMessage(Object object, long chatId, int messageId, String callbackId, boolean editMessagePreferred) {
         String locale = ((LocaleDTO)object).getLocaleString();
         if(editMessagePreferred){
             EditMessageText editMessageText = new EditMessageText();
@@ -44,20 +43,18 @@ public class CartView implements TelegramView {
         }
     }
 
-
     public InlineKeyboardMarkup generateKeyboard(String locale) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonPay = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.pay",locale));
-        buttonPay.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.PAY,true));
-        InlineKeyboardButton buttonViewRemove = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.basket.viewremove",locale));
-        buttonViewRemove.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_VIEW_REMOVE,false));
-        keyboardButtonsRow1.add(buttonPay);
-        keyboardButtonsRow1.add(buttonViewRemove);
+        InlineKeyboardButton buttonENG = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.language.english",locale));
+        buttonENG.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.SELECT_ENG,true));
+        InlineKeyboardButton buttonRUS = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.language.russian",locale));
+        buttonRUS.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.SELECT_RUS,true));
+        keyboardButtonsRow1.add(buttonENG);
+        keyboardButtonsRow1.add(buttonRUS);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-
         InlineKeyboardButton buttonBack = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.back",locale));
         buttonBack.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MAIN_MENU,true));
         keyboardButtonsRow2.add(buttonBack);
@@ -65,17 +62,17 @@ public class CartView implements TelegramView {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
+
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
+    }
+
+    public String generateText(String locale) {
+        return localeMessageService.getMessage("view.currency.generate",locale);
     }
 
     @Override
     public String getTypeString() {
         return TYPE_STRING;
     }
-
-    public String generateText(String locale) {
-        return localeMessageService.getMessage("view.basket.generate",locale);
-    }
-
 }

@@ -31,42 +31,46 @@ public class MainMenuView implements TelegramView {
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
-            editMessageText.setText(generateText());
-            editMessageText.setReplyMarkup(generateKeyboard(mainMenuViewDTO.getCurrency()));
+            editMessageText.setText(generateText(mainMenuViewDTO.getLocaleString()));
+            editMessageText.setReplyMarkup(generateKeyboard(mainMenuViewDTO.getCurrency(),mainMenuViewDTO.getLocaleString()));
             return editMessageText;
         }
         else{
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setText(generateText());
-            sendMessage.setReplyMarkup(generateKeyboard(mainMenuViewDTO.getCurrency()));
+            sendMessage.setText(generateText(mainMenuViewDTO.getLocaleString()));
+            sendMessage.setReplyMarkup(generateKeyboard(mainMenuViewDTO.getCurrency(),mainMenuViewDTO.getLocaleString()));
             sendMessage.setChatId(chatId);
             return sendMessage;
         }
     }
 
-    public InlineKeyboardMarkup generateKeyboard(String currency) {
+    public InlineKeyboardMarkup generateKeyboard(String currency,String locale) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.catalog"));
+        InlineKeyboardButton buttonCatalog = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.catalog",locale));
         buttonCatalog.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_CATALOG_MENU,true));
-        InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.basket"));
+        InlineKeyboardButton buttonBasket = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.basket",locale));
         buttonBasket.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_BASKET,true));
         keyboardButtonsRow1.add(buttonCatalog);
         keyboardButtonsRow1.add(buttonBasket);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager"));
+        InlineKeyboardButton buttonManager = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.manager",locale));
         buttonManager.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_MANAGER_INFO,true));
-        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency") +" (" + currency + ")");
+        InlineKeyboardButton buttonCurrency = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.currency",locale) +" (" + currency + ")");
         buttonCurrency.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_CURRENCY_SELECT,true));
         keyboardButtonsRow2.add(buttonManager);
         keyboardButtonsRow2.add(buttonCurrency);
 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
-        InlineKeyboardButton buttonOrders = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.orders"));
+        InlineKeyboardButton buttonOrders = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.orders",locale));
         buttonOrders.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_ORDERS,true));
+        InlineKeyboardButton buttonLanguage = new InlineKeyboardButton().setText(localeMessageService.getMessage("view.mainmenu.language",locale));
+        buttonLanguage.setCallbackData(UserCallbackRequest.generateQueryMessage(ButtonAction.GO_TO_LANGUAGE_SELECT,true));
         keyboardButtonsRow3.add(buttonOrders);
+        keyboardButtonsRow3.add(buttonLanguage);
+
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
@@ -77,8 +81,8 @@ public class MainMenuView implements TelegramView {
         return inlineKeyboardMarkup;
     }
 
-    public String generateText(){
-        return localeMessageService.getMessage("view.mainmenu.generate");
+    public String generateText(String locale){
+        return localeMessageService.getMessage("view.mainmenu.generate",locale);
     }
 
     @Override

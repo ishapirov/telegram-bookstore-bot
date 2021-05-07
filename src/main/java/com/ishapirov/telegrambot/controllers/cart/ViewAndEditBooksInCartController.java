@@ -5,6 +5,7 @@ import com.ishapirov.telegrambot.domain.bookaddedtocart.BookAddedToCart;
 import com.ishapirov.telegrambot.services.cartservices.BookInCart;
 import com.ishapirov.telegrambot.services.cartservices.CartService;
 import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
 import com.ishapirov.telegrambot.views.cart.dto.ViewRemoveBooksViewInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ public class ViewAndEditBooksInCartController {
     CartService cartService;
     @Autowired
     CurrencyConversionService currencyConversionService;
+    @Autowired
+    UserProfileService userProfileService;
 
     public static final String TYPE_STRING ="viewandedit";
 
@@ -38,6 +41,7 @@ public class ViewAndEditBooksInCartController {
         viewRemoveBooksViewInfo.setConvertedTotalPrice(currencyConversionService.displayPrice(viewAndEditBooksControllerInfo.getUserId(),
                 bookInCart.getBookAddedToCart().getBook().getPrice(),
                 bookInCart.getBookAddedToCart().getQuantity()));
+        viewRemoveBooksViewInfo.setLocaleString(userProfileService.getLocaleForUser(viewAndEditBooksControllerInfo.getUserId()));
         viewRemoveBooksViewInfo.setRemovedFromCart(false);
         return viewRemoveBooksViewInfo;
     }

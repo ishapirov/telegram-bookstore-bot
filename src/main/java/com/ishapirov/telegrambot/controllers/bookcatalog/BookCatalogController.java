@@ -9,6 +9,7 @@ import com.ishapirov.telegrambot.services.bookservices.BookInventoryService;
 import com.ishapirov.telegrambot.services.bookservices.BookCatalogRetrievalService;
 import com.ishapirov.telegrambot.services.cartservices.CartService;
 import com.ishapirov.telegrambot.services.currency.CurrencyConversionService;
+import com.ishapirov.telegrambot.services.userprofile.UserProfileService;
 import com.ishapirov.telegrambot.views.bookcatalog.dto.BookCatalogViewInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,8 @@ public class BookCatalogController {
     BookInventoryService bookInventoryService;
     @Autowired
     CartService cartService;
+    @Autowired
+    UserProfileService userProfileService;
 
     public BookCatalogViewInfo getBookCatalogBookInfo(CatalogControllerData controllerData){
         BookCatalogViewInfo bookCatalogViewInfo = new BookCatalogViewInfo();
@@ -43,6 +46,7 @@ public class BookCatalogController {
         bookCatalogViewInfo.setBookQuantityAvailable(bookInventoryService.getQuantity(bookInCatalog.getBook().getBookISBN()));
 
         bookCatalogViewInfo.setConvertedPrice(currencyConversionService.displayPrice(controllerData.getUserId(), bookInCatalog.getBook().getPrice()));
+        bookCatalogViewInfo.setLocaleString(userProfileService.getLocaleForUser(controllerData.getUserId()));
         return bookCatalogViewInfo;
     }
 
